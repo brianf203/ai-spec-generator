@@ -32,7 +32,7 @@ class EnhancedPocketFlowOrchestrator:
         self._setup_workflow()
     
     def _setup_workflow(self):
-        """Setup the enhanced PocketFlow workflow graph"""
+        """Setup the workflow graph"""
         self.workflow_graph.add_node("code_analyzer", node=CodeAnalyzerNode(self.config))
         self.workflow_graph.add_node("spec_generator", node=SpecificationGeneratorNode(self.config))
         self.workflow_graph.add_node("code_regeneration", node=CodeRegenerationNode(self.config))
@@ -53,8 +53,8 @@ class EnhancedPocketFlowOrchestrator:
         self.workflow_graph.add_edge("runtime_feedback_loop", "convergence_checker")
     
     def process_project(self, project_path: str, target_similarity: float = 0.95) -> Dict[str, Any]:
-        """Process a Python project through the enhanced PocketFlow workflow"""
-        print(f"Starting Enhanced PocketFlow specification generation for: {project_path}")
+        """Process a Python project through the workflow"""
+        print(f"Starting specification generation for: {project_path}")
         print(f"   Features: Test generation, dual feedback loops, behavioral validation")
         
         context = {
@@ -79,7 +79,7 @@ class EnhancedPocketFlowOrchestrator:
             return final_report
             
         except Exception as e:
-            print(f"ERROR in Enhanced PocketFlow processing: {e}")
+            print(f"ERROR in processing: {e}")
             import traceback
             traceback.print_exc()
             return {
@@ -89,7 +89,7 @@ class EnhancedPocketFlowOrchestrator:
             }
     
     def _execute_workflow(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the enhanced PocketFlow workflow with dual feedback loops"""
+        """Execute the workflow with dual feedback loops"""
         iteration = 0
         max_iterations = context['max_iterations']
         
@@ -99,7 +99,7 @@ class EnhancedPocketFlowOrchestrator:
             iteration += 1
             context['current_iteration'] = iteration
             
-            print(f"\nEnhanced PocketFlow Iteration {iteration}")
+            print(f"\nIteration {iteration}")
             print("=" * 70)
             
             if not code_analyzer_executed:
@@ -315,7 +315,7 @@ class EnhancedPocketFlowOrchestrator:
                     with open(os.path.join(results_dir, filename), 'w') as f:
                         json.dump(result_data, f, indent=2, default=str)
         
-        print(f"Enhanced PocketFlow results saved to: {output_dir}")
+        print(f"Results saved to: {output_dir}")
 
 
 def create_enhanced_pocketflow_orchestrator(config: Dict[str, Any]) -> EnhancedPocketFlowOrchestrator:
