@@ -50,7 +50,7 @@ python main.py \
 ```bash
 # Quick test on the included sample project
 python main.py \
-  --dir test_project_v2 \
+  --dir test_project \
   --target-similarity 0.90 \
   --max-iterations 3 \
   --output demo_results \
