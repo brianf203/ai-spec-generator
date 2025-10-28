@@ -54,8 +54,8 @@ class EnhancedPocketFlowOrchestrator:
     
     def process_project(self, project_path: str, target_similarity: float = 0.95) -> Dict[str, Any]:
         """Process a Python project through the enhanced PocketFlow workflow"""
-        print(f"🚀 Starting Enhanced PocketFlow specification generation for: {project_path}")
-        print(f"   📋 Features: Test generation, dual feedback loops, behavioral validation")
+        print(f"Starting Enhanced PocketFlow specification generation for: {project_path}")
+        print(f"   Features: Test generation, dual feedback loops, behavioral validation")
         
         context = {
             'project_path': project_path,
@@ -79,7 +79,7 @@ class EnhancedPocketFlowOrchestrator:
             return final_report
             
         except Exception as e:
-            print(f"❌ Error in Enhanced PocketFlow processing: {e}")
+            print(f"ERROR in Enhanced PocketFlow processing: {e}")
             import traceback
             traceback.print_exc()
             return {
@@ -99,18 +99,18 @@ class EnhancedPocketFlowOrchestrator:
             iteration += 1
             context['current_iteration'] = iteration
             
-            print(f"\n🔄 Enhanced PocketFlow Iteration {iteration}")
+            print(f"\nEnhanced PocketFlow Iteration {iteration}")
             print("=" * 70)
             
             if not code_analyzer_executed:
                 node = self.workflow_graph.nodes["code_analyzer"]['node']
-                print(f"  🔧 Executing code_analyzer...")
+                print(f"  Executing code_analyzer...")
                 try:
                     context = node.execute(context)
-                    print(f"    ✅ code_analyzer completed")
+                    print(f"    code_analyzer completed")
                     code_analyzer_executed = True
                 except Exception as e:
-                    print(f"    ❌ code_analyzer failed: {e}")
+                    print(f"    ERROR: code_analyzer failed: {e}")
                     raise
             
             core_nodes = [
@@ -128,32 +128,32 @@ class EnhancedPocketFlowOrchestrator:
                     break
                 
                 node = self.workflow_graph.nodes[node_name]['node']
-                print(f"  🔧 Executing {node_name}...")
+                print(f"  Executing {node_name}...")
                 
                 try:
                     context = node.execute(context)
-                    print(f"    ✅ {node_name} completed")
+                    print(f"    {node_name} completed")
                 except Exception as e:
-                    print(f"    ❌ {node_name} failed: {e}")
+                    print(f"    ERROR: {node_name} failed: {e}")
                     raise
             
             if not context.get('convergence_achieved', False):
                 node = self.workflow_graph.nodes["convergence_checker"]['node']
-                print(f"  🔧 Executing convergence_checker...")
+                print(f"  Executing convergence_checker...")
                 
                 try:
                     context = node.execute(context)
-                    print(f"    ✅ convergence_checker completed")
+                    print(f"    convergence_checker completed")
                 except Exception as e:
-                    print(f"    ❌ convergence_checker failed: {e}")
+                    print(f"    ERROR: convergence_checker failed: {e}")
                     raise
             
             if context.get('convergence_achieved', False):
-                print(f"🎯 Convergence achieved after {iteration} iterations")
+                print(f"Convergence achieved after {iteration} iterations")
                 break
         
         if iteration >= max_iterations:
-            print(f"⚠️  Maximum iterations ({max_iterations}) reached")
+            print(f"WARNING: Maximum iterations ({max_iterations}) reached")
         
         return context
     
@@ -315,7 +315,7 @@ class EnhancedPocketFlowOrchestrator:
                     with open(os.path.join(results_dir, filename), 'w') as f:
                         json.dump(result_data, f, indent=2, default=str)
         
-        print(f"💾 Enhanced PocketFlow results saved to: {output_dir}")
+        print(f"Enhanced PocketFlow results saved to: {output_dir}")
 
 
 def create_enhanced_pocketflow_orchestrator(config: Dict[str, Any]) -> EnhancedPocketFlowOrchestrator:

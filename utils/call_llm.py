@@ -48,7 +48,7 @@ class LLMClient:
                 
             except Exception as e:
                 if attempt < max_retries - 1:
-                    print(f"    ⚠️  LLM call failed (attempt {attempt + 1}/{max_retries}): {e}")
+                    print(f"    WARNING: LLM call failed (attempt {attempt + 1}/{max_retries}): {e}")
                     time.sleep(2 ** attempt)  # Exponential backoff
                     continue
                 else:
@@ -92,17 +92,17 @@ def test_llm_connection() -> bool:
 
 if __name__ == "__main__":
     """Test LLM connection"""
-    print("🧪 Testing LLM connection...")
+    print("Testing LLM connection...")
     
     if test_llm_connection():
-        print("✅ LLM connection successful")
+        print("LLM connection successful")
         
         # Test a simple call
         try:
             response = call_llm("What is 2+2?")
-            print(f"📝 LLM response: {response[:100]}...")
+            print(f"LLM response: {response[:100]}...")
         except Exception as e:
-            print(f"❌ LLM call failed: {e}")
+            print(f"ERROR: LLM call failed: {e}")
     else:
-        print("❌ LLM connection failed")
+        print("ERROR: LLM connection failed")
         print("Please check your GEMINI_API_KEY environment variable")

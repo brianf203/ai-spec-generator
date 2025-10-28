@@ -59,17 +59,17 @@ Features:
     args = parser.parse_args()
     
     if args.repo and not args.repo.startswith(('http://', 'https://')):
-        print("❌ Repository URL must start with http:// or https://")
+        print("ERROR: Repository URL must start with http:// or https://")
         sys.exit(1)
     
     if args.dir and not os.path.exists(args.dir):
-        print(f"❌ Directory not found: {args.dir}")
+        print(f"ERROR: Directory not found: {args.dir}")
         sys.exit(1)
     
     api_key = args.api_key or os.getenv("GEMINI_API_KEY")
     
     if not api_key:
-        print("❌ GEMINI_API_KEY not provided")
+        print("ERROR: GEMINI_API_KEY not provided")
         print("   Set environment variable: export GEMINI_API_KEY='your_key'")
         print("   Or use --api-key argument")
         sys.exit(1)
@@ -89,13 +89,13 @@ Features:
         'cache_enabled': not args.no_cache
     }
     
-    print("🧪 Testing LLM connection...")
+    print("Testing LLM connection...")
     if not test_llm_connection():
-        print("❌ Failed to connect to Gemini API")
+        print("ERROR: Failed to connect to Gemini API")
         print("   Please check your API key and internet connection")
         sys.exit(1)
     
-    print("✅ Connected to Gemini API")
+    print("Connected to Gemini API")
     
     if args.repo:
         project_path = args.repo
@@ -105,15 +105,15 @@ Features:
         project_name = args.name or os.path.basename(os.path.abspath(args.dir))
     
     print(f"\n{'='*70}")
-    print(f"📁 Project: {project_name}")
-    print(f"🎯 Target similarity: {args.target_similarity:.1%}")
-    print(f"🔄 Max iterations: {args.max_iterations}")
-    print(f"🧪 Features: Test generation + Dual feedback loops")
+    print(f"Project: {project_name}")
+    print(f"Target similarity: {args.target_similarity:.1%}")
+    print(f"Max iterations: {args.max_iterations}")
+    print(f"Features: Test generation + Dual feedback loops")
     print(f"{'='*70}")
     
     os.makedirs(args.output, exist_ok=True)
     
-    print("\n🚀 Initializing Enhanced PocketFlow orchestrator...")
+    print("\nInitializing Enhanced PocketFlow orchestrator...")
     orchestrator = create_enhanced_pocketflow_orchestrator(config)
     
     start_time = time.time()
@@ -127,52 +127,52 @@ Features:
         if results['success']:
             analysis = results['analysis']
             print(f"\n{'='*70}")
-            print(f"🎉 Specification generation completed!")
+            print(f"Specification generation completed!")
             print(f"{'='*70}")
-            print(f"⏱️  Total time: {end_time - start_time:.2f} seconds")
-            print(f"\n📊 Function Statistics:")
+            print(f"Total time: {end_time - start_time:.2f} seconds")
+            print(f"\nFunction Statistics:")
             print(f"  Total functions: {analysis['total_functions']}")
-            print(f"  ✅ Successful: {analysis['successful_functions']}")
-            print(f"  ❌ Failed: {analysis['failed_functions']}")
-            print(f"\n📈 Similarity Metrics:")
+            print(f"  Successful: {analysis['successful_functions']}")
+            print(f"  Failed: {analysis['failed_functions']}")
+            print(f"\nSimilarity Metrics:")
             print(f"  Average similarity: {analysis['average_similarity']:.1%}")
-            print(f"  🎯 Success rate: {analysis['success_rate']:.1%}")
+            print(f"  Success rate: {analysis['success_rate']:.1%}")
             print(f"  Target achieved: {analysis['target_achieved_count']}/{analysis['total_functions']} functions")
-            print(f"\n🔄 Iteration Metrics:")
+            print(f"\nIteration Metrics:")
             print(f"  Iterations completed: {analysis['iterations_completed']}")
-            print(f"  🎯 Convergence achieved: {analysis['convergence_achieved']}")
+            print(f"  Convergence achieved: {analysis['convergence_achieved']}")
             
             test_stats = analysis['test_statistics']
-            print(f"\n🧪 Test Statistics:")
+            print(f"\nTest Statistics:")
             print(f"  Tests generated: {test_stats['tests_generated']} functions")
             print(f"  Tests executed: {test_stats['tests_executed']} functions")
             print(f"  Total test cases: {test_stats.get('total_test_cases', 0)}")
             print(f"  Behavioral matches: {test_stats['behavioral_matches']}/{test_stats['tests_executed']}")
-            print(f"  🎯 Behavioral match rate: {test_stats.get('behavioral_match_rate', 0):.1%}")
+            print(f"  Behavioral match rate: {test_stats.get('behavioral_match_rate', 0):.1%}")
             
-            print(f"\n📊 Similarity Distribution:")
+            print(f"\nSimilarity Distribution:")
             for category, count in analysis['similarity_distribution'].items():
                 print(f"  {category}: {count} functions")
             
             if analysis['average_similarity'] < 0.85:
-                print(f"\n💡 Recommendations:")
+                print(f"\nRecommendations:")
                 print(f"  - Consider increasing max iterations for better results")
                 print(f"  - Review failed functions for common patterns")
                 print(f"  - Check if target similarity is achievable")
             elif analysis['average_similarity'] >= 0.90:
-                print(f"\n🎉 Excellent results! System is performing very well.")
+                print(f"\nExcellent results! System is performing very well.")
             
-            print(f"\n📁 Results saved to: {args.output}")
+            print(f"\nResults saved to: {args.output}")
             
         else:
-            print(f"❌ Specification generation failed: {results.get('error', 'Unknown error')}")
+            print(f"ERROR: Specification generation failed: {results.get('error', 'Unknown error')}")
             sys.exit(1)
     
     except KeyboardInterrupt:
-        print(f"\n⚠️  Process interrupted by user")
+        print(f"\nProcess interrupted by user")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"ERROR: Unexpected error: {e}")
         if args.verbose:
             import traceback
             traceback.print_exc()

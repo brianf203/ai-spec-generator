@@ -37,7 +37,7 @@ class CodeAnalyzerNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze code structure and extract functions"""
-        print("    📊 Analyzing code structure...")
+        print("    Analyzing code structure...")
         
         project_path = context['project_path']
         
@@ -50,7 +50,7 @@ class CodeAnalyzerNode(BaseNode):
         all_functions = {}
         
         for file_path in python_files:
-            print(f"      📁 Analyzing {os.path.basename(file_path)}")
+            print(f"      Analyzing {os.path.basename(file_path)}")
             
             try:
                 file_analysis = self._analyze_file(file_path)
@@ -69,14 +69,14 @@ class CodeAnalyzerNode(BaseNode):
                     }
             
             except Exception as e:
-                print(f"        ⚠️  Error analyzing {file_path}: {e}")
+                print(f"        WARNING: Error analyzing {file_path}: {e}")
                 continue
         
         context['analyzed_files'] = analyzed_files
         context['all_functions'] = all_functions
         context['total_functions'] = len(all_functions)
         
-        print(f"    ✅ Found {len(all_functions)} functions across {len(analyzed_files)} files")
+        print(f"    Found {len(all_functions)} functions across {len(analyzed_files)} files")
         
         return context
     
@@ -242,7 +242,7 @@ class SpecificationGeneratorNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Generate specifications for all functions"""
-        print("    📝 Generating specifications...")
+        print("    Generating specifications...")
         
         all_functions = context.get('all_functions', {})
         specifications = context.get('specifications', {})
@@ -251,7 +251,7 @@ class SpecificationGeneratorNode(BaseNode):
             if func_id in specifications and specifications[func_id].get('success', False):
                 continue
             
-            print(f"      🔧 Processing {func_info['function_name']}...")
+            print(f"      Processing {func_info['function_name']}...")
             
             try:
                 spec_result = self._generate_specification(func_info, context)
@@ -267,7 +267,7 @@ class SpecificationGeneratorNode(BaseNode):
                         'original_code': func_info['source_code'],
                         'imports': func_info.get('imports', [])
                     }
-                    print(f"        ✅ Specification generated")
+                    print(f"        Specification generated")
                 else:
                     specifications[func_id] = {
                         'success': False,
@@ -275,7 +275,7 @@ class SpecificationGeneratorNode(BaseNode):
                         'function_name': func_info['function_name'],
                         'file_path': func_info['file_path']
                     }
-                    print(f"        ❌ Failed: {spec_result['error']}")
+                    print(f"        ERROR: Failed: {spec_result['error']}")
             
             except Exception as e:
                 specifications[func_id] = {
@@ -284,10 +284,10 @@ class SpecificationGeneratorNode(BaseNode):
                     'function_name': func_info['function_name'],
                     'file_path': func_info['file_path']
                 }
-                print(f"        ❌ Error: {e}")
+                print(f"        ERROR: {e}")
         
         context['specifications'] = specifications
-        print(f"    ✅ Generated {len([s for s in specifications.values() if s.get('success', False)])} specifications")
+        print(f"    Generated {len([s for s in specifications.values() if s.get('success', False)])} specifications")
         
         return context
     
@@ -417,7 +417,7 @@ class CodeRegenerationNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Regenerate code for all functions"""
-        print("    🔄 Regenerating code from specifications...")
+        print("    Regenerating code from specifications...")
         
         specifications = context.get('specifications', {})
         regenerated_code = context.get('regenerated_code', {})
@@ -429,7 +429,7 @@ class CodeRegenerationNode(BaseNode):
             if func_id in regenerated_code:
                 continue
             
-            print(f"      🔧 Regenerating {spec_data['function_name']}...")
+            print(f"      Regenerating {spec_data['function_name']}...")
             
             try:
                 code = self._regenerate_code(spec_data['specification'])
@@ -440,16 +440,16 @@ class CodeRegenerationNode(BaseNode):
                         'function_name': spec_data['function_name'],
                         'file_path': spec_data['file_path']
                     }
-                    print(f"        ✅ Code regenerated")
+                    print(f"        Code regenerated")
                 else:
-                    print(f"        ❌ Failed to regenerate code")
+                    print(f"        ERROR: Failed to regenerate code")
             
             except Exception as e:
-                print(f"        ❌ Error: {e}")
+                print(f"        ERROR: {e}")
                 continue
         
         context['regenerated_code'] = regenerated_code
-        print(f"    ✅ Regenerated {len(regenerated_code)} functions")
+        print(f"    Regenerated {len(regenerated_code)} functions")
         
         return context
     
@@ -542,7 +542,7 @@ class TestGenerationNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Generate tests for all functions"""
-        print("    🧪 Generating tests for behavioral validation...")
+        print("    Generating tests for behavioral validation...")
         
         specifications = context.get('specifications', {})
         generated_tests = context.get('generated_tests', {})
@@ -554,7 +554,7 @@ class TestGenerationNode(BaseNode):
             if func_id in generated_tests:
                 continue
             
-            print(f"      🔧 Generating tests for {spec_data['function_name']}...")
+            print(f"      Generating tests for {spec_data['function_name']}...")
             
             try:
                 tests = self._generate_tests(
@@ -569,16 +569,16 @@ class TestGenerationNode(BaseNode):
                         'function_name': spec_data['function_name'],
                         'file_path': spec_data['file_path']
                     }
-                    print(f"        ✅ Generated {len(tests)} tests")
+                    print(f"        Generated {len(tests)} tests")
                 else:
-                    print(f"        ❌ Failed to generate tests")
+                    print(f"        ERROR: Failed to generate tests")
             
             except Exception as e:
-                print(f"        ❌ Error: {e}")
+                print(f"        ERROR: {e}")
                 continue
         
         context['generated_tests'] = generated_tests
-        print(f"    ✅ Generated tests for {len(generated_tests)} functions")
+        print(f"    Generated tests for {len(generated_tests)} functions")
         
         return context
     
@@ -636,7 +636,7 @@ class TestExecutionNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute tests on all functions"""
-        print("    🏃 Executing tests on original and regenerated code...")
+        print("    Executing tests on original and regenerated code...")
         
         specifications = context.get('specifications', {})
         regenerated_code = context.get('regenerated_code', {})
@@ -653,7 +653,7 @@ class TestExecutionNode(BaseNode):
             if func_id in test_results:
                 continue
             
-            print(f"      🔧 Testing {specifications[func_id]['function_name']}...")
+            print(f"      Testing {specifications[func_id]['function_name']}...")
             
             try:
                 results = self._execute_tests(
@@ -668,14 +668,14 @@ class TestExecutionNode(BaseNode):
                 
                 passed = results['original_passed'] + results['regenerated_passed']
                 total = results['total_tests'] * 2
-                print(f"        ✅ Tests passed: {passed}/{total}")
+                print(f"        Tests passed: {passed}/{total}")
                 
             except Exception as e:
-                print(f"        ❌ Error: {e}")
+                print(f"        ERROR: {e}")
                 continue
         
         context['test_results'] = test_results
-        print(f"    ✅ Executed tests for {len(test_results)} functions")
+        print(f"    Executed tests for {len(test_results)} functions")
         
         return context
     
@@ -773,7 +773,7 @@ class SimilarityAnalyzerNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze similarity for all functions"""
-        print("    📊 Analyzing similarity...")
+        print("    Analyzing similarity...")
         
         specifications = context.get('specifications', {})
         regenerated_code = context.get('regenerated_code', {})
@@ -787,7 +787,7 @@ class SimilarityAnalyzerNode(BaseNode):
             if func_id not in regenerated_code:
                 continue
             
-            print(f"      🔍 Analyzing {specifications[func_id]['function_name']}...")
+            print(f"      Analyzing {specifications[func_id]['function_name']}...")
             
             try:
                 original_code = specifications[func_id]['original_code']
@@ -813,10 +813,10 @@ class SimilarityAnalyzerNode(BaseNode):
                     'test_based_validation': func_id in test_results
                 }
                 
-                print(f"        📈 Similarity: {overall_similarity:.1%}")
+                print(f"        Similarity: {overall_similarity:.1%}")
                 
             except Exception as e:
-                print(f"        ❌ Error: {e}")
+                print(f"        ERROR: {e}")
                 continue
         
         context['similarity_results'] = similarity_results
@@ -826,7 +826,7 @@ class SimilarityAnalyzerNode(BaseNode):
             context['similarity_history'] = []
         context['similarity_history'].extend(similarities)
         
-        print(f"    ✅ Analyzed {len(similarity_results)} functions")
+        print(f"    Analyzed {len(similarity_results)} functions")
         
         return context
     
@@ -866,7 +866,7 @@ class FeedbackLoopNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Process first feedback loop: modify prompts"""
-        print("    🔄 Processing feedback loop (prompt modification)...")
+        print("    Processing feedback loop (prompt modification)...")
         
         similarity_results = context.get('similarity_results', {})
         target_similarity = context['target_similarity']
@@ -878,7 +878,7 @@ class FeedbackLoopNode(BaseNode):
         
         for func_id, result in similarity_results.items():
             if result['overall_similarity'] < target_similarity:
-                print(f"      🔧 Analyzing gaps for {func_id}...")
+                print(f"      Analyzing gaps for {func_id}...")
                 
                 try:
                     gaps = self._analyze_similarity_gaps(result)
@@ -890,13 +890,13 @@ class FeedbackLoopNode(BaseNode):
                     }
                     
                     improved_count += 1
-                    print(f"        ✅ Feedback prepared")
+                    print(f"        Feedback prepared")
                 
                 except Exception as e:
-                    print(f"        ❌ Error: {e}")
+                    print(f"        ERROR: {e}")
                     continue
         
-        print(f"    ✅ Prepared feedback for {improved_count} functions")
+        print(f"    Prepared feedback for {improved_count} functions")
         
         return context
     
@@ -928,7 +928,7 @@ class RuntimeFeedbackLoopNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Process second feedback loop: append test failures"""
-        print("    🔄 Processing runtime feedback loop (test failures)...")
+        print("    Processing runtime feedback loop (test failures)...")
         
         test_results = context.get('test_results', {})
         specifications = context.get('specifications', {})
@@ -940,7 +940,7 @@ class RuntimeFeedbackLoopNode(BaseNode):
         
         for func_id, results in test_results.items():
             if not results.get('behavioral_match', True):
-                print(f"      📋 Recording test failures for {func_id}...")
+                print(f"      Recording test failures for {func_id}...")
                 
                 try:
                     failure_summary = self._summarize_test_failures(results)
@@ -963,13 +963,13 @@ class RuntimeFeedbackLoopNode(BaseNode):
                         )
                     
                     feedback_count += 1
-                    print(f"        ✅ Recorded {len(results['failures'])} failures")
+                    print(f"        Recorded {len(results['failures'])} failures")
                 
                 except Exception as e:
-                    print(f"        ❌ Error: {e}")
+                    print(f"        ERROR: {e}")
                     continue
         
-        print(f"    ✅ Recorded runtime feedback for {feedback_count} functions")
+        print(f"    Recorded runtime feedback for {feedback_count} functions")
         
         return context
     
@@ -993,7 +993,7 @@ class ConvergenceCheckerNode(BaseNode):
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Check if the process has converged"""
-        print("    🎯 Checking convergence...")
+        print("    Checking convergence...")
         
         similarity_results = context.get('similarity_results', {})
         target_similarity = context['target_similarity']
@@ -1032,9 +1032,9 @@ class ConvergenceCheckerNode(BaseNode):
         context['convergence_rate'] = convergence_rate
         
         if converged:
-            print(f"    ✅ Convergence achieved: {reason}")
+            print(f"    Convergence achieved: {reason}")
         else:
-            print(f"    🔄 Continuing iteration (convergence rate: {convergence_rate:.1%})")
+            print(f"    Continuing iteration (convergence rate: {convergence_rate:.1%})")
         
         return context
 
