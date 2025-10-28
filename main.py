@@ -136,8 +136,6 @@ Features:
             print(f"  Failed: {analysis['failed_functions']}")
             print(f"\nSimilarity Metrics:")
             print(f"  Average similarity: {analysis['average_similarity']:.1%}")
-            print(f"  Success rate: {analysis['success_rate']:.1%}")
-            print(f"  Target achieved: {analysis['target_achieved_count']}/{analysis['total_functions']} functions")
             print(f"\nIteration Metrics:")
             print(f"  Iterations completed: {analysis['iterations_completed']}")
             print(f"  Convergence achieved: {analysis['convergence_achieved']}")
@@ -149,10 +147,6 @@ Features:
             print(f"  Total test cases: {test_stats.get('total_test_cases', 0)}")
             print(f"  Behavioral matches: {test_stats['behavioral_matches']}/{test_stats['tests_executed']}")
             print(f"  Behavioral match rate: {test_stats.get('behavioral_match_rate', 0):.1%}")
-            
-            print(f"\nSimilarity Distribution:")
-            for category, count in analysis['similarity_distribution'].items():
-                print(f"  {category}: {count} functions")
             
             if analysis['average_similarity'] < 0.85:
                 print(f"\nRecommendations:")
