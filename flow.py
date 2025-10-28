@@ -9,7 +9,7 @@ import time
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 import networkx as nx
-from enhanced_nodes_v2 import (
+from nodes import (
     CodeAnalyzerNode,
     SpecificationGeneratorNode,
     CodeRegenerationNode,

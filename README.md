@@ -34,10 +34,10 @@ pip install -r requirements.txt
 export GEMINI_API_KEY='your_api_key_here'
 
 # Analyze a local directory
-python enhanced_main_v2.py --dir /path/to/python/project
+python main.py --dir /path/to/python/project
 
 # With custom settings
-python enhanced_main_v2.py \
+python main.py \
   --dir /path/to/project \
   --target-similarity 0.90 \
   --max-iterations 3 \
@@ -49,7 +49,7 @@ python enhanced_main_v2.py \
 
 ```bash
 # Quick test on the included sample project
-python enhanced_main_v2.py \
+python main.py \
   --dir test_project_v2 \
   --target-similarity 0.90 \
   --max-iterations 3 \

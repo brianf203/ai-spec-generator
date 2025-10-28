@@ -11,7 +11,7 @@ import argparse
 from typing import Dict, Any, Optional
 from pathlib import Path
 
-from enhanced_flow_v2 import create_enhanced_pocketflow_orchestrator
+from flow import create_enhanced_pocketflow_orchestrator
 from utils.call_llm import test_llm_connection
 
 
