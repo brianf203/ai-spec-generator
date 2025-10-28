@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_typical_palindrome",
+      "inputs": {
+        "s": "racecar"
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a typical palindrome string."
+    },
+    {
+      "test_name": "test_typical_non_palindrome",
+      "inputs": {
+        "s": "hello"
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a typical non-palindrome string."
+    },
+    {
+      "test_name": "test_palindrome_with_spaces",
+      "inputs": {
+        "s": "race car"
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a palindrome string with spaces."
+    },
+    {
+      "test_name": "test_palindrome_with_mixed_case",
+      "inputs": {
+        "s": "RaceCar"
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a palindrome string with mixed case letters."
+    },
+    {
+      "test_name": "test_palindrome_with_spaces_and_mixed_case",
+      "inputs": {
+        "s": "Race Car"
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a palindrome string with spaces and mixed case letters."
+    },
+    {
+      "test_name": "test_empty_string",
+      "inputs": {
+        "s": ""
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests an empty string."
+    },
+    {
+      "test_name": "test_string_with_only_spaces",
+      "inputs": {
+        "s": "   "
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a string containing only spaces."
+    },
+    {
+      "test_name": "test_string_with_leading_and_trailing_spaces",
+      "inputs": {
+        "s": "  racecar  "
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a string with leading and trailing spaces."
+    },
+    {
+      "test_name": "test_non_palindrome_with_spaces",
+      "inputs": {
+        "s": "not a race car"
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a non-palindrome string with spaces."
+    },
+    {
+      "test_name": "test_palindrome_with_punctuation",
+      "inputs": {
+        "s": "A man, a plan, a canal: Panama"
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a palindrome string with punctuation (should be false, as punctuation is not removed)."
+    }
+  ],
+  "function_name": "is_palindrome",
+  "file_path": "test_project_v2/string_utils.py"
+}

@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_factorial_positive_number",
+      "inputs": {
+        "n": 5
+      },
+      "expected_output": 120,
+      "expected_exception": null,
+      "description": "Test with a positive integer to verify normal factorial calculation."
+    },
+    {
+      "test_name": "test_factorial_zero",
+      "inputs": {
+        "n": 0
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Test with 0, the base case for factorial."
+    },
+    {
+      "test_name": "test_factorial_one",
+      "inputs": {
+        "n": 1
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Test with 1, another base case for factorial."
+    },
+    {
+      "test_name": "test_factorial_negative_number",
+      "inputs": {
+        "n": -1
+      },
+      "expected_output": null,
+      "expected_exception": "ValueError",
+      "description": "Test with a negative number to ensure ValueError is raised."
+    },
+    {
+      "test_name": "test_factorial_large_number",
+      "inputs": {
+        "n": 10
+      },
+      "expected_output": 3628800,
+      "expected_exception": null,
+      "description": "Test with a larger positive number to verify factorial calculation accuracy."
+    },
+    {
+      "test_name": "test_factorial_another_positive",
+      "inputs": {
+        "n": 4
+      },
+      "expected_output": 24,
+      "expected_exception": null,
+      "description": "Another test case to validate factorial calculation."
+    },
+    {
+      "test_name": "test_factorial_close_to_zero",
+      "inputs": {
+        "n": 2
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Test near the base cases to ensure correct behavior"
+    },
+    {
+      "test_name": "test_factorial_negative_large",
+      "inputs": {
+        "n": -5
+      },
+      "expected_output": null,
+      "expected_exception": "ValueError",
+      "description": "Test with a large negative number to confirm ValueError handling"
+    },
+    {
+      "test_name": "test_factorial_small_positive",
+      "inputs": {
+        "n": 3
+      },
+      "expected_output": 6,
+      "expected_exception": null,
+      "description": "Test with a small positive integer."
+    },
+    {
+      "test_name": "test_factorial_edge_positive",
+      "inputs": {
+        "n": 12
+      },
+      "expected_output": 479001600,
+      "expected_exception": null,
+      "description": "Testing the edge with a positive integer that could be the highest reasonable value to calculate without hitting recursion depth issues."
+    }
+  ],
+  "function_name": "calculate_factorial",
+  "file_path": "test_project_v2/math_utils.py"
+}

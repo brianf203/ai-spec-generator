@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_normal_case",
+      "inputs": {
+        "s": "hello world"
+      },
+      "expected_output": "Hello World",
+      "expected_exception": null,
+      "description": "Test with a simple string of lowercase words."
+    },
+    {
+      "test_name": "test_mixed_case",
+      "inputs": {
+        "s": "hELLo wORLd"
+      },
+      "expected_output": "Hello World",
+      "expected_exception": null,
+      "description": "Test with a string of mixed case words."
+    },
+    {
+      "test_name": "test_empty_string",
+      "inputs": {
+        "s": ""
+      },
+      "expected_output": "",
+      "expected_exception": null,
+      "description": "Test with an empty string."
+    },
+    {
+      "test_name": "test_leading_and_trailing_spaces",
+      "inputs": {
+        "s": "  hello world  "
+      },
+      "expected_output": "Hello World",
+      "expected_exception": null,
+      "description": "Test with leading and trailing spaces."
+    },
+    {
+      "test_name": "test_multiple_spaces_between_words",
+      "inputs": {
+        "s": "hello   world"
+      },
+      "expected_output": "Hello World",
+      "expected_exception": null,
+      "description": "Test with multiple spaces between words."
+    },
+    {
+      "test_name": "test_string_with_numbers",
+      "inputs": {
+        "s": "123 hello world"
+      },
+      "expected_output": "123 Hello World",
+      "expected_exception": null,
+      "description": "Test with a string containing numbers at the beginning."
+    },
+    {
+      "test_name": "test_string_with_special_characters",
+      "inputs": {
+        "s": "!@# hello world"
+      },
+      "expected_output": "!@# Hello World",
+      "expected_exception": null,
+      "description": "Test with a string containing special characters at the beginning."
+    },
+    {
+      "test_name": "test_string_with_only_spaces",
+      "inputs": {
+        "s": "   "
+      },
+      "expected_output": "",
+      "expected_exception": null,
+      "description": "Test with a string containing only spaces."
+    },
+    {
+      "test_name": "test_single_word",
+      "inputs": {
+        "s": "word"
+      },
+      "expected_output": "Word",
+      "expected_exception": null,
+      "description": "Test with a single word string."
+    },
+    {
+      "test_name": "test_string_with_unicode_characters",
+      "inputs": {
+        "s": "\u4f60\u597d\u4e16\u754c"
+      },
+      "expected_output": "\u4f60\u597d\u4e16\u754c",
+      "expected_exception": null,
+      "description": "Test with a string containing unicode characters."
+    }
+  ],
+  "function_name": "capitalize_words",
+  "file_path": "test_project_v2/string_utils.py"
+}

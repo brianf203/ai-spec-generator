@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_fibonacci_zero",
+      "inputs": {
+        "n": 0
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the base case when n is 0."
+    },
+    {
+      "test_name": "test_fibonacci_one",
+      "inputs": {
+        "n": 1
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Tests the base case when n is 1."
+    },
+    {
+      "test_name": "test_fibonacci_negative",
+      "inputs": {
+        "n": -1
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the case when n is negative."
+    },
+    {
+      "test_name": "test_fibonacci_small_positive",
+      "inputs": {
+        "n": 5
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests a small positive value for n."
+    },
+    {
+      "test_name": "test_fibonacci_medium_positive",
+      "inputs": {
+        "n": 10
+      },
+      "expected_output": 55,
+      "expected_exception": null,
+      "description": "Tests a medium positive value for n."
+    },
+    {
+      "test_name": "test_fibonacci_large_positive",
+      "inputs": {
+        "n": 15
+      },
+      "expected_output": 610,
+      "expected_exception": null,
+      "description": "Tests a larger positive value for n."
+    },
+    {
+      "test_name": "test_fibonacci_large_negative",
+      "inputs": {
+        "n": -10
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests a large negative value for n."
+    },
+    {
+      "test_name": "test_fibonacci_boundary_one",
+      "inputs": {
+        "n": 2
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Tests the boundary after base cases for n=2."
+    },
+    {
+      "test_name": "test_fibonacci_edge_positive_1",
+      "inputs": {
+        "n": 3
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Test edge positive case with n = 3."
+    },
+    {
+      "test_name": "test_fibonacci_edge_positive_2",
+      "inputs": {
+        "n": 4
+      },
+      "expected_output": 3,
+      "expected_exception": null,
+      "description": "Test edge positive case with n = 4."
+    }
+  ],
+  "function_name": "fibonacci",
+  "file_path": "test_project_v2/math_utils.py"
+}

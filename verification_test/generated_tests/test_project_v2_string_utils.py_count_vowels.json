@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_empty_string",
+      "inputs": {
+        "s": ""
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the function with an empty string."
+    },
+    {
+      "test_name": "test_no_vowels",
+      "inputs": {
+        "s": "bcdfghjklmnpqrstvwxyz"
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing no vowels."
+    },
+    {
+      "test_name": "test_all_vowels_lowercase",
+      "inputs": {
+        "s": "aeiou"
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing all lowercase vowels."
+    },
+    {
+      "test_name": "test_all_vowels_uppercase",
+      "inputs": {
+        "s": "AEIOU"
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing all uppercase vowels."
+    },
+    {
+      "test_name": "test_mixed_case_vowels",
+      "inputs": {
+        "s": "aEiOu"
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing mixed case vowels."
+    },
+    {
+      "test_name": "test_mixed_string_with_vowels",
+      "inputs": {
+        "s": "Hello World!"
+      },
+      "expected_output": 3,
+      "expected_exception": null,
+      "description": "Tests the function with a mixed string containing vowels."
+    },
+    {
+      "test_name": "test_string_with_numbers_and_vowels",
+      "inputs": {
+        "s": "1a2e3i4o5u"
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing numbers and vowels."
+    },
+    {
+      "test_name": "test_string_with_special_characters_and_vowels",
+      "inputs": {
+        "s": "!@#$%^&*(aeiou)"
+      },
+      "expected_output": 5,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing special characters and vowels."
+    },
+    {
+      "test_name": "test_long_string",
+      "inputs": {
+        "s": "This is a very long string with many vowels, including aeiouAEIOU repeated several times. aeiouAEIOUaeiouAEIOUaeiouAEIOU"
+      },
+      "expected_output": 45,
+      "expected_exception": null,
+      "description": "Tests the function with a long string containing many vowels."
+    },
+    {
+      "test_name": "test_non_ascii_characters",
+      "inputs": {
+        "s": "H\u00e9llo W\u00f8rld!"
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Tests that only ASCII vowels are counted and non-ASCII characters are ignored."
+    }
+  ],
+  "function_name": "count_vowels",
+  "file_path": "test_project_v2/string_utils.py"
+}

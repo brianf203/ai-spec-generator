@@ -1,0 +1,2645 @@
+{
+  "success": true,
+  "analysis": {
+    "total_functions": 10,
+    "successful_functions": 10,
+    "failed_functions": 0,
+    "average_similarity": 0.9522675776331406,
+    "success_rate": 0.8,
+    "target_achieved_count": 8,
+    "iterations_completed": 1,
+    "convergence_achieved": true,
+    "similarity_distribution": {
+      "excellent (\u226595%)": 6,
+      "very_good (\u226590%)": 2,
+      "good (\u226585%)": 2,
+      "fair (\u226570%)": 0,
+      "poor (<70%)": 0
+    },
+    "test_statistics": {
+      "tests_generated": 10,
+      "tests_executed": 10,
+      "total_test_cases": 101,
+      "behavioral_matches": 10,
+      "behavioral_mismatches": 0,
+      "behavioral_match_rate": 1.0
+    },
+    "function_results": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "success": true,
+        "function_name": "add_numbers",
+        "file_path": "test_project_v2/math_utils.py",
+        "final_similarity": 0.999618320610687,
+        "similarity_metrics": {
+          "textual_similarity": 0.9923664122137404,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 1.0000000000000002,
+          "overall_similarity": 0.999618320610687,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 11,
+        "behavioral_match": true,
+        "test_pass_rate": 0.8181818181818182
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "success": true,
+        "function_name": "multiply_numbers",
+        "file_path": "test_project_v2/math_utils.py",
+        "final_similarity": 1.0,
+        "similarity_metrics": {
+          "textual_similarity": 1.0,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 1.0000000000000002,
+          "overall_similarity": 1.0,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 1.0
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "success": true,
+        "function_name": "calculate_factorial",
+        "file_path": "test_project_v2/math_utils.py",
+        "final_similarity": 0.9633839446576545,
+        "similarity_metrics": {
+          "textual_similarity": 0.921161825726141,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.6732585337134754,
+          "overall_similarity": 0.9633839446576545,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 0.4
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "success": true,
+        "function_name": "is_prime",
+        "file_path": "test_project_v2/math_utils.py",
+        "final_similarity": 0.978141414141677,
+        "similarity_metrics": {
+          "textual_similarity": 0.9076517150395779,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.8275882838969815,
+          "overall_similarity": 0.978141414141677,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 1.0
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "success": true,
+        "function_name": "fibonacci",
+        "file_path": "test_project_v2/math_utils.py",
+        "final_similarity": 0.8802595965882994,
+        "similarity_metrics": {
+          "textual_similarity": 0.8742857142857143,
+          "structural_similarity": 0.8292682926829268,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.4630140843498944,
+          "overall_similarity": 0.8802595965882994,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 0.4
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "success": true,
+        "function_name": "reverse_string",
+        "file_path": "test_project_v2/string_utils.py",
+        "final_similarity": 0.9235513546826349,
+        "similarity_metrics": {
+          "textual_similarity": 0.8888888888888888,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.2910691023819054,
+          "overall_similarity": 0.9235513546826349,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 1.0
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "success": true,
+        "function_name": "count_vowels",
+        "file_path": "test_project_v2/string_utils.py",
+        "final_similarity": 0.9747091956318814,
+        "similarity_metrics": {
+          "textual_similarity": 0.9328358208955224,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.7806740458710526,
+          "overall_similarity": 0.9747091956318814,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 0.9
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "success": true,
+        "function_name": "is_palindrome",
+        "file_path": "test_project_v2/string_utils.py",
+        "final_similarity": 0.9398844703847903,
+        "similarity_metrics": {
+          "textual_similarity": 0.8973384030418251,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.45017550232699,
+          "overall_similarity": 0.9398844703847903,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 1.0
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "success": true,
+        "function_name": "capitalize_words",
+        "file_path": "test_project_v2/string_utils.py",
+        "final_similarity": 0.9635754164823102,
+        "similarity_metrics": {
+          "textual_similarity": 0.9393939393939394,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.6660571951261314,
+          "overall_similarity": 0.9635754164823102,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 1.0
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "success": true,
+        "function_name": "count_words",
+        "file_path": "test_project_v2/string_utils.py",
+        "final_similarity": 0.8995520631514718,
+        "similarity_metrics": {
+          "textual_similarity": 0.6283185840707964,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.1813613394793215,
+          "overall_similarity": 0.8995520631514718,
+          "behavioral_test_similarity": 1.0
+        },
+        "tests_executed": 10,
+        "behavioral_match": true,
+        "test_pass_rate": 0.9
+      }
+    }
+  },
+  "context": {
+    "project_path": "test_project_v2",
+    "target_similarity": 0.9,
+    "max_iterations": 2,
+    "current_iteration": 1,
+    "specifications": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "success": true,
+        "function_name": "add_numbers",
+        "file_path": "test_project_v2/math_utils.py",
+        "specification": {
+          "raw_specification": "```json\n{\n  \"function_specification\": {\n    \"function_name\": \"add_numbers\",\n    \"file_path\": \"test_project_v2/math_utils.py\",\n    \"description\": \"This function adds two numbers.\",\n    \"complexity\": 1,\n    \"imports\": [],\n    \"signature\": {\n      \"parameters\": [\n        {\n          \"name\": \"a\",\n          \"type\": \"number\",\n          \"description\": \"The first number to add. Can be int or float.\",\n          \"example_values\": [2, 3.14, -5]\n        },\n        {\n          \"name\": \"b\",\n          \"type\": \"number\",\n          \"description\": \"The second number to add. Can be int or float.\",\n          \"example_values\": [5, 1.618, 0]\n        }\n      ],\n      \"return_type\": \"number\",\n      \"return_value_description\": \"The sum of the two input numbers (a + b).\",\n      \"return_value_examples\": [7, 4.758, -5]\n    },\n    \"internal_logic\": {\n      \"description\": \"The function calculates the sum of the two input parameters.\",\n      \"control_flow\": \"The function consists of a single return statement.\",\n      \"steps\": [\n        \"Calculate the sum of 'a' and 'b'.\",\n        \"Return the calculated sum.\"\n      ],\n       \"operators\": [\"+\"]\n    },\n    \"variables\": [\n      {\n        \"name\": \"a\",\n        \"purpose\": \"The first input number.\"\n      },\n      {\n        \"name\": \"b\",\n        \"purpose\": \"The second input number.\"\n      }\n    ],\n    \"comments_and_docstrings\": {\n      \"docstring\": \"Add two numbers\",\n      \"inline_comments\": []\n    },\n    \"error_handling\": {\n      \"description\": \"No specific error handling is implemented. If non-numeric types are provided, the Python interpreter's type error will be raised.\",\n      \"error_types\": []\n    },\n    \"edge_cases\": {\n      \"description\": \"No explicit handling of edge cases is implemented. Standard Python behavior will apply.\",\n      \"examples\": [\n        {\"a\": 0, \"b\": 0, \"expected_result\": 0, \"description\": \"Adding zero to zero\"},\n        {\"a\": 1e10, \"b\": 1e10, \"expected_result\": 2e10, \"description\": \"Adding very large numbers\"},\n        {\"a\": -1e10, \"b\": 1e10, \"expected_result\": 0.0, \"description\": \"Adding large negative and positive number\"},\n        {\"a\": float('inf'), \"b\": 1, \"expected_result\": float('inf'), \"description\": \"Adding infinity\"},\n        {\"a\": float('-inf'), \"b\": 1, \"expected_result\": float('-inf'), \"description\": \"Adding negative infinity\"}\n      ]\n    },\n    \"dependencies\": [],\n    \"side_effects\": \"None. This function has no side effects.\",\n    \"additional_details\": {\n      \"coding_style\": \"Follows standard Python conventions. Should be simple and readable.\",\n      \"naming_conventions\": \"Follows standard Python naming conventions (snake_case for variable names).\",\n      \"indentation\": \"Uses 4 spaces for indentation.\",\n      \"line_length\": \"Lines should be no longer than 79 characters.\",\n      \"blank_lines\": \"One blank line between the function signature and the body.\"\n    },\n    \"example_usage\": {\n      \"example1\": {\n        \"code\": \"result = add_numbers(5, 3)\\nprint(result)\",\n        \"expected_output\": \"8\"\n      },\n      \"example2\": {\n        \"code\": \"result = add_numbers(2.5, 7.5)\\nprint(result)\",\n        \"expected_output\": \"10.0\"\n      }\n    }\n  }\n}\n```",
+          "parsed": false
+        },
+        "complexity": 1,
+        "dependencies": [],
+        "original_code": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n    return a + b",
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "success": true,
+        "function_name": "multiply_numbers",
+        "file_path": "test_project_v2/math_utils.py",
+        "specification": {
+          "function_specification": {
+            "function_name": "multiply_numbers",
+            "file_path": "test_project_v2/math_utils.py",
+            "description": "Multiplies two numbers and returns the product.",
+            "complexity": 1,
+            "dependencies": [],
+            "imports": [],
+            "signature": {
+              "parameters": [
+                {
+                  "name": "a",
+                  "type": "number",
+                  "description": "The first number to be multiplied. Can be an integer or a float.",
+                  "example_values": [
+                    2,
+                    3.14,
+                    -5
+                  ]
+                },
+                {
+                  "name": "b",
+                  "type": "number",
+                  "description": "The second number to be multiplied. Can be an integer or a float.",
+                  "example_values": [
+                    5,
+                    -2.7,
+                    0
+                  ]
+                }
+              ],
+              "return_type": "number",
+              "return_description": "The product of a and b. The return type will match the broader type of the inputs (e.g., if either a or b is a float, the return will be a float).",
+              "example_values": [
+                10,
+                -8.1,
+                0
+              ]
+            },
+            "implementation_details": {
+              "logic": "The function multiplies the two input numbers 'a' and 'b' using the multiplication operator '*'.",
+              "control_flow": "The function executes a single multiplication operation and returns the result.",
+              "variable_names": {
+                "a": "The first number to multiply.",
+                "b": "The second number to multiply."
+              },
+              "comments_and_docstrings": {
+                "docstring": "Multiply two numbers",
+                "inline_comments": []
+              },
+              "error_handling": {
+                "patterns": "None. The function does not explicitly handle errors. Python's built-in multiplication handles type coercion for compatible numeric types. It will raise a TypeError if either input is not a number or cannot be implicitly converted into one."
+              },
+              "edge_cases_and_special_conditions": {
+                "zero_multiplication": "If either 'a' or 'b' is zero, the function returns zero.",
+                "positive_and_negative_multiplication": "The function correctly handles multiplication of positive and negative numbers, returning a negative result if exactly one input is negative.",
+                "floating_point_numbers": "The function correctly handles multiplication with floating-point numbers."
+              },
+              "side_effects": "None. The function does not modify any external state or have any side effects."
+            },
+            "expected_code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b"
+          }
+        },
+        "complexity": 1,
+        "dependencies": [],
+        "original_code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b",
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "success": true,
+        "function_name": "calculate_factorial",
+        "file_path": "test_project_v2/math_utils.py",
+        "specification": {
+          "function_specification": {
+            "function_name": "calculate_factorial",
+            "description": "Calculates the factorial of a non-negative integer using recursion.",
+            "file_path": "test_project_v2/math_utils.py",
+            "imports": [],
+            "signature": {
+              "parameters": [
+                {
+                  "name": "n",
+                  "type": "int",
+                  "description": "The non-negative integer for which to calculate the factorial.",
+                  "default": null
+                }
+              ],
+              "return_type": "int",
+              "return_value": "The factorial of n. Returns 1 if n is 0 or 1. Raises ValueError if n is negative."
+            },
+            "internal_logic": {
+              "error_handling": {
+                "condition": "If n is less than 0",
+                "action": "Raise a ValueError exception with the message 'Factorial not defined for negative numbers'.",
+                "exception_type": "ValueError",
+                "message": "Factorial not defined for negative numbers"
+              },
+              "base_case": {
+                "conditions": [
+                  "n == 0",
+                  "n == 1"
+                ],
+                "action": "Return 1."
+              },
+              "recursive_case": {
+                "condition": "If n is greater than 1",
+                "action": "Return n multiplied by the result of calling calculate_factorial with the argument n - 1.",
+                "recursive_call": "calculate_factorial(n - 1)"
+              },
+              "control_flow": "The function first checks if n is negative. If it is, a ValueError is raised.  If n is 0 or 1, the function returns 1. Otherwise, the function recursively calls itself with the argument n-1 and returns the product of n and the result of the recursive call."
+            },
+            "variable_names": [
+              {
+                "name": "n",
+                "purpose": "Represents the input number for which the factorial is calculated."
+              }
+            ],
+            "comments_and_docstrings": {
+              "function_docstring": "Calculate factorial of a number"
+            },
+            "edge_cases_and_special_conditions": {
+              "negative_input": "If n is negative, a ValueError is raised.",
+              "zero_or_one_input": "If n is 0 or 1, the function returns 1."
+            },
+            "dependencies": [
+              "ValueError",
+              "calculate_factorial (recursive call)"
+            ],
+            "side_effects_and_state_changes": "None. The function is pure and has no side effects.",
+            "recursion_details": {
+              "recursion_depth": "The maximum recursion depth is n.  The function recurses n-1 times.",
+              "termination_conditions": "The recursion terminates when n is 0 or 1."
+            },
+            "algorithmic_logic": "The function implements the standard recursive definition of the factorial function: factorial(n) = n * factorial(n-1) for n > 1, and factorial(0) = factorial(1) = 1."
+          }
+        },
+        "complexity": 4,
+        "dependencies": [
+          "ValueError",
+          "calculate_factorial"
+        ],
+        "original_code": "def calculate_factorial(n):\n    \"\"\"Calculate factorial of a number\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial not defined for negative numbers\")\n    if n == 0 or n == 1:\n        return 1\n    return n * calculate_factorial(n - 1)",
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "success": true,
+        "function_name": "is_prime",
+        "file_path": "test_project_v2/math_utils.py",
+        "specification": {
+          "function_name": "is_prime",
+          "file_path": "test_project_v2/math_utils.py",
+          "description": "Determines if a given number is a prime number.",
+          "signature": {
+            "name": "is_prime",
+            "parameters": [
+              {
+                "name": "n",
+                "type": "int",
+                "description": "The number to check for primality."
+              }
+            ],
+            "return_type": "bool",
+            "return_value_description": "True if the input number is prime, False otherwise."
+          },
+          "implementation_details": {
+            "algorithm": "Iterative primality test using trial division up to the square root of the input number.",
+            "logic": [
+              {
+                "step": 1,
+                "description": "Handle base cases: If n is less than 2, it's not prime. Return False.",
+                "code_equivalent": "if n < 2: return False"
+              },
+              {
+                "step": 2,
+                "description": "Iterate from 2 up to the integer part of the square root of n (inclusive).",
+                "code_equivalent": "for i in range(2, int(n ** 0.5) + 1):"
+              },
+              {
+                "step": 3,
+                "description": "For each number i in the iteration, check if n is divisible by i. If it is, n is not prime. Return False.",
+                "code_equivalent": "if n % i == 0: return False"
+              },
+              {
+                "step": 4,
+                "description": "If the loop completes without finding a divisor, n is prime. Return True.",
+                "code_equivalent": "return True"
+              }
+            ],
+            "variable_names": {
+              "n": {
+                "purpose": "The input number to be checked for primality.",
+                "type": "int"
+              },
+              "i": {
+                "purpose": "The iterator variable used to test divisibility. Ranges from 2 to the square root of n.",
+                "type": "int"
+              }
+            },
+            "control_flow": {
+              "conditional_statements": [
+                {
+                  "type": "if",
+                  "condition": "n < 2",
+                  "action": "Return False (base case)"
+                },
+                {
+                  "type": "if",
+                  "condition": "n % i == 0",
+                  "action": "Return False (n is divisible by i)"
+                }
+              ],
+              "loop": {
+                "type": "for",
+                "range": "range(2, int(n ** 0.5) + 1)",
+                "purpose": "Iterate through potential divisors"
+              }
+            }
+          },
+          "documentation": {
+            "docstring": "Check if a number is prime"
+          },
+          "error_handling": {
+            "none": "No specific error handling is implemented. Negative numbers and non-integer inputs will produce potentially unexpected results due to implicit type conversion or simply by the `n < 2` check.  Explicit type checking or error raising is not present."
+          },
+          "edge_cases": {
+            "n < 2": "Returns False for numbers less than 2, as they are not prime.",
+            "n = 2": "Returns True as 2 is the smallest prime number.",
+            "n = 3": "Returns True as 3 is a prime number.",
+            "large_n": "The function will still correctly identify large prime numbers, but the execution time will increase as the square root of n increases."
+          },
+          "dependencies": [
+            "range",
+            "int"
+          ],
+          "imports": [],
+          "side_effects": "None. The function does not modify any external state.",
+          "complexity": 4,
+          "additional_notes": "The function uses an efficient primality test by only checking divisors up to the square root of the input number.  The use of `int(n ** 0.5) + 1` ensures that the square root is correctly handled for both perfect squares and non-perfect squares. It is crucial to maintain the exact spacing, docstring and names provided in the original Python snippet to assure that LLM generates the exact code. The use of exponentiation operator `**` should be maintained rather than using math.sqrt to improve similarity"
+        },
+        "complexity": 4,
+        "dependencies": [
+          "range",
+          "int"
+        ],
+        "original_code": "def is_prime(n):\n    \"\"\"Check if a number is prime\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "success": true,
+        "function_name": "fibonacci",
+        "file_path": "test_project_v2/math_utils.py",
+        "specification": {
+          "specification": {
+            "function_name": "fibonacci",
+            "file_path": "test_project_v2/math_utils.py",
+            "description": "Calculates the nth Fibonacci number using recursion.",
+            "complexity": 3,
+            "dependencies": [
+              "fibonacci",
+              "fibonacci"
+            ],
+            "imports": [],
+            "function_signature": {
+              "name": "fibonacci",
+              "parameters": [
+                {
+                  "name": "n",
+                  "type": "int",
+                  "description": "The index of the Fibonacci number to calculate (starting from 0).",
+                  "default": null
+                }
+              ],
+              "return_type": "int",
+              "description": "Returns the nth Fibonacci number."
+            },
+            "docstring": "Calculate nth Fibonacci number",
+            "base_cases": [
+              {
+                "condition": "n <= 0",
+                "return_value": 0,
+                "description": "If n is less than or equal to 0, the function returns 0.  This handles the F(0) case and negative inputs."
+              },
+              {
+                "condition": "n == 1",
+                "return_value": 1,
+                "description": "If n is equal to 1, the function returns 1. This handles the F(1) case."
+              }
+            ],
+            "recursive_cases": [
+              {
+                "condition": "n > 1",
+                "logic": "The function recursively calls itself twice: once with n-1 and once with n-2.  The results of these two calls are added together and returned.",
+                "recursive_calls": [
+                  {
+                    "function_name": "fibonacci",
+                    "arguments": [
+                      "n - 1"
+                    ],
+                    "description": "Calculates the (n-1)th Fibonacci number."
+                  },
+                  {
+                    "function_name": "fibonacci",
+                    "arguments": [
+                      "n - 2"
+                    ],
+                    "description": "Calculates the (n-2)th Fibonacci number."
+                  }
+                ],
+                "return_value": "fibonacci(n - 1) + fibonacci(n - 2)",
+                "description": "The sum of the (n-1)th and (n-2)th Fibonacci numbers."
+              }
+            ],
+            "internal_logic": {
+              "control_flow": "The function first checks the base cases. If neither base case is met, it proceeds to the recursive case. The recursive case makes two recursive calls and returns their sum.",
+              "variable_names": [
+                {
+                  "name": "n",
+                  "purpose": "Represents the index of the Fibonacci number being calculated."
+                }
+              ]
+            },
+            "error_handling": {
+              "patterns": "No explicit error handling. Negative input values are handled by returning 0.",
+              "description": "The function does not raise any exceptions.  Negative input is considered a base case and returns 0."
+            },
+            "edge_cases": [
+              {
+                "input": 0,
+                "expected_output": 0,
+                "description": "Handles the base case for F(0)."
+              },
+              {
+                "input": 1,
+                "expected_output": 1,
+                "description": "Handles the base case for F(1)."
+              },
+              {
+                "input": -1,
+                "expected_output": 0,
+                "description": "Handles negative input values by returning 0."
+              }
+            ],
+            "side_effects": {
+              "description": "No side effects. The function is purely functional."
+            },
+            "state_changes": {
+              "description": "No state changes. The function does not modify any external state."
+            },
+            "recursion_depth": {
+              "description": "The recursion depth depends on the input value 'n'. It will be proportional to 'n' and can lead to stack overflow errors for large values of 'n' due to exponential time complexity."
+            },
+            "termination_conditions": {
+              "description": "The recursion terminates when either n <= 0 or n == 1. These are the base cases that provide a direct return value without further recursion."
+            },
+            "algorithmic_logic": {
+              "description": "The function implements the standard recursive definition of the Fibonacci sequence: F(n) = F(n-1) + F(n-2), with base cases F(0) = 0 and F(1) = 1."
+            }
+          }
+        },
+        "complexity": 3,
+        "dependencies": [
+          "fibonacci",
+          "fibonacci"
+        ],
+        "original_code": "def fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number\"\"\"\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)",
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "success": true,
+        "function_name": "reverse_string",
+        "file_path": "test_project_v2/string_utils.py",
+        "specification": {
+          "function_name": "reverse_string",
+          "file_path": "test_project_v2/string_utils.py",
+          "description": "This function reverses a given string.",
+          "complexity": 1,
+          "imports": [],
+          "dependencies": [],
+          "specification": {
+            "function_signature": {
+              "name": "reverse_string",
+              "parameters": [
+                {
+                  "name": "s",
+                  "type": "str",
+                  "description": "The input string to be reversed."
+                }
+              ]
+            },
+            "return_type": {
+              "type": "str",
+              "description": "The reversed string."
+            },
+            "internal_logic": {
+              "description": "The function uses string slicing with a step of -1 to create a reversed copy of the input string. This operation is efficient and concise.",
+              "steps": [
+                "Create a reversed copy of the string 's' using string slicing with a step of -1 (s[::-1]).",
+                "Return the reversed string."
+              ],
+              "control_flow": "The function consists of a single return statement, so there is no branching or looping."
+            },
+            "variable_names": {
+              "s": {
+                "purpose": "Stores the input string.",
+                "type": "str"
+              }
+            },
+            "comments_and_docstrings": {
+              "docstring": "Reverse a string",
+              "comments": []
+            },
+            "error_handling": {
+              "description": "The function does not explicitly handle errors. String slicing will work correctly even if the input is an empty string. If the input is not a string, the string slicing operation will raise a TypeError.",
+              "patterns": "None"
+            },
+            "edge_cases": {
+              "empty_string": "If the input string 's' is empty (''), the function will return an empty string ('').",
+              "string_with_spaces": "If the input string contains spaces, the spaces will also be reversed.",
+              "unicode_characters": "The function correctly handles Unicode characters within the string."
+            },
+            "side_effects": {
+              "description": "The function has no side effects. It does not modify any global state or perform any I/O operations.",
+              "none": true
+            },
+            "other_details": {
+              "performance": "The function has a time complexity of O(n), where n is the length of the string. String slicing creates a new string, so it has a space complexity of O(n)."
+            },
+            "example": {
+              "input": "hello",
+              "output": "olleh"
+            }
+          }
+        },
+        "complexity": 1,
+        "dependencies": [],
+        "original_code": "def reverse_string(s):\n    \"\"\"Reverse a string\"\"\"\n    return s[::-1]",
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "success": true,
+        "function_name": "count_vowels",
+        "file_path": "test_project_v2/string_utils.py",
+        "specification": {
+          "specification": {
+            "function_name": "count_vowels",
+            "description": "Counts the number of vowels (a, e, i, o, u, case-insensitive) in a given string.",
+            "signature": {
+              "name": "count_vowels",
+              "parameters": [
+                {
+                  "name": "s",
+                  "type": "str",
+                  "description": "The input string to be analyzed."
+                }
+              ],
+              "return_type": "int",
+              "return_description": "The number of vowels found in the input string."
+            },
+            "internal_logic": {
+              "algorithm": "Iterate through the input string character by character. For each character, check if it is present in a predefined set of vowels (both lowercase and uppercase). If the character is a vowel, increment a counter. Finally, return the total count of vowels.",
+              "control_flow": [
+                "1. Initialize a string variable 'vowels' containing all vowels (both lowercase and uppercase).",
+                "2. Use a generator expression with the 'sum' function to iterate through the input string 's'.",
+                "3. For each 'char' in 's', check if 'char' is present in the 'vowels' string.",
+                "4. If 'char' is in 'vowels', the generator yields 1; otherwise, it implicitly yields 0. The 'sum' function adds these 1s and 0s.",
+                "5. Return the resulting sum, which represents the total number of vowels in the string."
+              ],
+              "variables": [
+                {
+                  "name": "vowels",
+                  "type": "str",
+                  "purpose": "Stores all vowels (both lowercase and uppercase) for efficient membership checking.",
+                  "initial_value": "'aeiouAEIOU'"
+                },
+                {
+                  "implicit_name": "char",
+                  "type": "str",
+                  "purpose": "Represents the current character being processed in the input string 's'.",
+                  "scope": "Within the generator expression."
+                }
+              ]
+            },
+            "comments_and_docstrings": {
+              "docstring": "Count vowels in a string"
+            },
+            "error_handling": {
+              "strategy": "No explicit error handling. The function is designed to handle any string input gracefully, including empty strings and strings containing non-ASCII characters.",
+              "edge_cases_handled": "Handles empty strings correctly by returning 0. Handles strings with no vowels by returning 0. Handles strings with mixed-case vowels."
+            },
+            "edge_cases": {
+              "empty_string": "Inputting an empty string should return 0.",
+              "string_with_no_vowels": "Inputting a string with no vowels should return 0.",
+              "string_with_mixed_case_vowels": "Inputting a string with mixed-case vowels should count all of them correctly.",
+              "string_with_non_ascii_characters": "Inputting a string with non-ASCII characters will only count ASCII vowels. Non-ASCII 'vowel-like' characters will not be counted."
+            },
+            "dependencies_and_imports": {
+              "dependencies": [
+                "sum"
+              ],
+              "imports": []
+            },
+            "side_effects": {
+              "description": "The function has no side effects. It does not modify any external state or perform any I/O operations.",
+              "i_o": "None",
+              "state_modification": "None"
+            },
+            "additional_details": {
+              "performance": "The function has a time complexity of O(n), where n is the length of the input string. The space complexity is O(1), as it uses a fixed amount of memory regardless of the input size.",
+              "style": "The code is concise and uses a generator expression for efficient vowel counting.",
+              "idempotency": "The function is idempotent. Calling it multiple times with the same input will always produce the same output."
+            },
+            "file_path": "test_project_v2/string_utils.py"
+          }
+        },
+        "complexity": 1,
+        "dependencies": [
+          "sum"
+        ],
+        "original_code": "def count_vowels(s):\n    \"\"\"Count vowels in a string\"\"\"\n    vowels = 'aeiouAEIOU'\n    return sum(1 for char in s if char in vowels)",
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "success": true,
+        "function_name": "is_palindrome",
+        "file_path": "test_project_v2/string_utils.py",
+        "specification": {
+          "function_name": "is_palindrome",
+          "file_path": "test_project_v2/string_utils.py",
+          "description": "This function checks if a given string is a palindrome, ignoring case and spaces.",
+          "signature": {
+            "name": "is_palindrome",
+            "parameters": [
+              {
+                "name": "s",
+                "type": "str",
+                "description": "The input string to be checked for palindrome property."
+              }
+            ],
+            "return_type": "bool",
+            "return_value_description": "True if the input string is a palindrome (ignoring case and spaces), False otherwise."
+          },
+          "implementation": {
+            "logic": [
+              "1. Convert the input string 's' to lowercase using the lower() method and assign it back to 's'.",
+              "2. Remove all spaces from the string 's' using the replace(' ', '') method and assign the modified string back to 's'.",
+              "3. Compare the modified string 's' with its reverse. The reverse is obtained using string slicing with a step of -1 (s[::-1]).",
+              "4. Return True if the string 's' is equal to its reverse, indicating that it's a palindrome. Otherwise, return False."
+            ],
+            "control_flow": [
+              "The function executes sequentially. No branching or loops are used after the initial modifications of the input string."
+            ],
+            "variable_names": [
+              {
+                "name": "s",
+                "purpose": "Represents the input string. It's modified in place to lowercase and have spaces removed."
+              }
+            ],
+            "comments_and_docstrings": {
+              "docstring": "Check if a string is a palindrome"
+            },
+            "error_handling": {
+              "patterns": "No explicit error handling is present. The function implicitly handles empty strings and strings with non-alphanumeric characters (after the space removal)."
+            },
+            "edge_cases": [
+              "Empty string: An empty string is considered a palindrome and will return True.",
+              "String with only spaces: A string containing only spaces will be reduced to an empty string and considered a palindrome.",
+              "String with mixed case letters: The function converts the string to lowercase, so case is ignored.",
+              "String with spaces: Spaces are removed from the string before the palindrome check."
+            ],
+            "dependencies": [
+              "String.lower()",
+              "String.replace()"
+            ],
+            "imports": [],
+            "side_effects": "None. The function does not modify any external state.",
+            "complexity": 1,
+            "additional_notes": "The function efficiently checks for palindromes by simplifying the input string before performing the comparison. The in-place modification of 's' does not affect external data."
+          }
+        },
+        "complexity": 1,
+        "dependencies": [
+          "s.lower"
+        ],
+        "original_code": "def is_palindrome(s):\n    \"\"\"Check if a string is a palindrome\"\"\"\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]",
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "success": true,
+        "function_name": "capitalize_words",
+        "file_path": "test_project_v2/string_utils.py",
+        "specification": {
+          "specification": {
+            "function_name": "capitalize_words",
+            "description": "This function capitalizes the first letter of each word in a given string.",
+            "signature": {
+              "parameters": [
+                {
+                  "name": "s",
+                  "type": "str",
+                  "description": "The input string to be processed. It can contain any characters but should ideally contain words separated by whitespace."
+                }
+              ],
+              "return_type": "str",
+              "description": "A new string where each word from the input string 's' has its first letter capitalized and all words are joined back together with a single space."
+            },
+            "logic": {
+              "steps": [
+                "1. Split the input string 's' into a list of words using the 'split()' method, which splits by whitespace by default.",
+                "2. Iterate through each word in the list of words.",
+                "3. For each word, apply the 'capitalize()' method to capitalize the first letter of the word.",
+                "4. Create a generator expression that yields the capitalized words.",
+                "5. Join the capitalized words back into a single string, separated by a single space character (' ').",
+                "6. Return the resulting capitalized string."
+              ],
+              "control_flow": "The function uses a list comprehension within a 'join' operation for efficient processing. The flow is sequential: split, process each word, then join."
+            },
+            "variables": {
+              "s": {
+                "purpose": "Holds the original input string.",
+                "type": "str",
+                "scope": "Function parameter"
+              },
+              "word": {
+                "purpose": "Iterates through each individual word extracted from the input string.",
+                "type": "str",
+                "scope": "List comprehension (generator expression)"
+              }
+            },
+            "comments_and_docstrings": {
+              "docstring": "Capitalize each word in a string",
+              "inline_comments": []
+            },
+            "error_handling": {
+              "none": "No explicit error handling is implemented. The 'split()' and 'capitalize()' methods handle empty strings and other edge cases implicitly without raising exceptions."
+            },
+            "edge_cases": {
+              "empty_string": "If the input string 's' is empty, the function will return an empty string ('').",
+              "string_with_leading_or_trailing_whitespace": "Leading or trailing whitespace in the input string 's' will be removed by the 'split()' method, and no extra spaces will be present in the output string.",
+              "string_with_multiple_spaces_between_words": "Multiple spaces between words in the input string 's' will be reduced to a single space in the output string.",
+              "string_with_non_alphabetic_characters": "The 'capitalize()' method only affects the first character if it is a letter. Non-alphabetic characters at the beginning of a word are unaffected."
+            },
+            "dependencies": {
+              "built_in_functions": [
+                "str.split()",
+                "str.capitalize()",
+                "str.join()"
+              ],
+              "imports": []
+            },
+            "side_effects": "The function has no side effects. It does not modify the input string or any external state.",
+            "additional_details": {
+              "style": "Uses a concise and readable list comprehension.  No unnecessary loops or intermediate variables.",
+              "performance": "The function is relatively efficient due to the use of built-in string methods and a list comprehension.",
+              "naming_conventions": "Uses descriptive variable names.  Follows standard Python naming conventions (snake_case)."
+            },
+            "file_path": "test_project_v2/string_utils.py"
+          }
+        },
+        "complexity": 1,
+        "dependencies": [
+          "word.capitalize",
+          "s.split"
+        ],
+        "original_code": "def capitalize_words(s):\n    \"\"\"Capitalize each word in a string\"\"\"\n    return ' '.join(word.capitalize() for word in s.split())",
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "success": true,
+        "function_name": "count_words",
+        "file_path": "test_project_v2/string_utils.py",
+        "specification": {
+          "specification": {
+            "function_name": "count_words",
+            "file_path": "test_project_v2/string_utils.py",
+            "description": "Counts the number of words in a given string.",
+            "complexity": 1,
+            "signature": {
+              "name": "count_words",
+              "parameters": [
+                {
+                  "name": "s",
+                  "type": "str",
+                  "description": "The input string to be analyzed."
+                }
+              ],
+              "return_type": "int",
+              "return_description": "The number of words in the input string."
+            },
+            "logic": {
+              "description": "The function splits the input string into a list of words using whitespace as a delimiter and then returns the length of the resulting list.",
+              "steps": [
+                {
+                  "step_number": 1,
+                  "action": "Split the input string `s` into a list of words using whitespace as a delimiter.  This utilizes the `s.split()` method, which by default splits on any whitespace (spaces, tabs, newlines).",
+                  "method": "s.split()",
+                  "output": "A list of strings, where each string is a word from the input string.",
+                  "variable_name": "words_list"
+                },
+                {
+                  "step_number": 2,
+                  "action": "Calculate the length of the `words_list` using the `len()` function.",
+                  "method": "len(words_list)",
+                  "output": "An integer representing the number of elements in the `words_list`.",
+                  "variable_name": "word_count"
+                },
+                {
+                  "step_number": 3,
+                  "action": "Return the `word_count`.",
+                  "method": "return word_count",
+                  "output": "Returns an integer."
+                }
+              ],
+              "control_flow": "The function executes sequentially: split the string, get the length of the list, and return the length."
+            },
+            "variables": [
+              {
+                "name": "s",
+                "type": "str",
+                "purpose": "The input string to be processed."
+              },
+              {
+                "name": "words_list",
+                "type": "list",
+                "purpose": "A list of strings representing the words in the input string, generated by the `split()` method."
+              },
+              {
+                "name": "word_count",
+                "type": "int",
+                "purpose": "The number of words in the input string, calculated as the length of the `words_list`."
+              }
+            ],
+            "comments": {
+              "line_1": null,
+              "line_2": "    \"\"\"Count words in a string\"\"\""
+            },
+            "docstring": "Count words in a string",
+            "error_handling": {
+              "description": "No explicit error handling is present. The `split()` method handles empty strings and strings with only whitespace gracefully, returning an empty list or a list of empty strings (which get counted). No exceptions are expected to be raised under normal circumstances.",
+              "patterns": []
+            },
+            "edge_cases": [
+              {
+                "input": "",
+                "expected_output": 0,
+                "description": "Empty string.  `split()` returns an empty list, so the count is 0."
+              },
+              {
+                "input": "   ",
+                "expected_output": 0,
+                "description": "String with only whitespace characters. `split()` with no arguments on a string with only whitespace returns an empty list."
+              },
+              {
+                "input": " word ",
+                "expected_output": 1,
+                "description": "String with leading and trailing whitespace."
+              },
+              {
+                "input": "word1 word2",
+                "expected_output": 2,
+                "description": "String with multiple words."
+              },
+              {
+                "input": "word1\tword2",
+                "expected_output": 2,
+                "description": "String with tab characters."
+              },
+              {
+                "input": "word1\nword2",
+                "expected_output": 2,
+                "description": "String with newline characters."
+              },
+              {
+                "input": "word1   word2",
+                "expected_output": 2,
+                "description": "String with multiple spaces between words."
+              }
+            ],
+            "dependencies": [
+              "len",
+              "s.split"
+            ],
+            "imports": [],
+            "side_effects": "None. The function does not modify any external state.",
+            "additional_details": {
+              "assumptions": [
+                "The input `s` is a string.",
+                "The definition of a word is any sequence of non-whitespace characters separated by whitespace."
+              ],
+              "code_style_preferences": {
+                "indentation": "4 spaces",
+                "line_length_limit": 79
+              }
+            }
+          }
+        },
+        "complexity": 1,
+        "dependencies": [
+          "len",
+          "s.split"
+        ],
+        "original_code": "def count_words(s):\n    \"\"\"Count words in a string\"\"\"\n    return len(s.split())",
+        "imports": []
+      }
+    },
+    "regenerated_code": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "code": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n\n    return a + b",
+        "function_name": "add_numbers",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b",
+        "function_name": "multiply_numbers",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "code": "def calculate_factorial(n: int) -> int:\n  \"\"\"Calculate factorial of a number\"\"\"\n  if n < 0:\n    raise ValueError(\"Factorial not defined for negative numbers\")\n  if n == 0 or n == 1:\n    return 1\n  else:\n    return n * calculate_factorial(n - 1)",
+        "function_name": "calculate_factorial",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "code": "def is_prime(n: int) -> bool:\n  \"\"\"Check if a number is prime\"\"\"\n  if n < 2:\n    return False\n  for i in range(2, int(n ** 0.5) + 1):\n    if n % i == 0:\n      return False\n  return True",
+        "function_name": "is_prime",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "code": "def fibonacci(n: int) -> int:\n  \"\"\"Calculate nth Fibonacci number\"\"\"\n  if n <= 0:\n    return 0\n  if n == 1:\n    return 1\n  return fibonacci(n - 1) + fibonacci(n - 2)",
+        "function_name": "fibonacci",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "code": "def reverse_string(s: str) -> str:\n  \"\"\"Reverse a string\"\"\"\n  return s[::-1]",
+        "function_name": "reverse_string",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "code": "def count_vowels(s: str) -> int:\n  \"\"\"Count vowels in a string\"\"\"\n  vowels = 'aeiouAEIOU'\n  return sum(1 for char in s if char in vowels)",
+        "function_name": "count_vowels",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "code": "def is_palindrome(s: str) -> bool:\n  \"\"\"Check if a string is a palindrome\"\"\"\n  s = s.lower()\n  s = s.replace(' ', '')\n  return s == s[::-1]",
+        "function_name": "is_palindrome",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "code": "def capitalize_words(s: str) -> str:\n  \"\"\"Capitalize each word in a string\"\"\"\n  return ' '.join(word.capitalize() for word in s.split())",
+        "function_name": "capitalize_words",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "code": "def count_words(s: str) -> int:\n    \"\"\"Count words in a string\"\"\"\n    words_list = s.split()\n    word_count = len(words_list)\n    return word_count",
+        "function_name": "count_words",
+        "file_path": "test_project_v2/string_utils.py"
+      }
+    },
+    "generated_tests": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "tests": [
+          {
+            "test_name": "test_positive_integers",
+            "inputs": {
+              "a": 5,
+              "b": 3
+            },
+            "expected_output": 8,
+            "expected_exception": null,
+            "description": "Tests addition of two positive integers."
+          },
+          {
+            "test_name": "test_positive_floats",
+            "inputs": {
+              "a": 2.5,
+              "b": 7.5
+            },
+            "expected_output": 10.0,
+            "expected_exception": null,
+            "description": "Tests addition of two positive floats."
+          },
+          {
+            "test_name": "test_negative_integers",
+            "inputs": {
+              "a": -5,
+              "b": -3
+            },
+            "expected_output": -8,
+            "expected_exception": null,
+            "description": "Tests addition of two negative integers."
+          },
+          {
+            "test_name": "test_mixed_integers",
+            "inputs": {
+              "a": 5,
+              "b": -3
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests addition of a positive and a negative integer."
+          },
+          {
+            "test_name": "test_mixed_floats",
+            "inputs": {
+              "a": -2.5,
+              "b": 7.5
+            },
+            "expected_output": 5.0,
+            "expected_exception": null,
+            "description": "Tests addition of a negative and a positive float."
+          },
+          {
+            "test_name": "test_zero",
+            "inputs": {
+              "a": 0,
+              "b": 0
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests addition of zero to zero."
+          },
+          {
+            "test_name": "test_large_numbers",
+            "inputs": {
+              "a": 10000000000.0,
+              "b": 10000000000.0
+            },
+            "expected_output": 20000000000.0,
+            "expected_exception": null,
+            "description": "Tests addition of two very large numbers."
+          },
+          {
+            "test_name": "test_large_negative_and_positive",
+            "inputs": {
+              "a": -10000000000.0,
+              "b": 10000000000.0
+            },
+            "expected_output": 0.0,
+            "expected_exception": null,
+            "description": "Adding large negative and positive number"
+          },
+          {
+            "test_name": "test_infinity",
+            "inputs": {
+              "a": "inf",
+              "b": 1
+            },
+            "expected_output": "inf",
+            "expected_exception": null,
+            "description": "Adding infinity"
+          },
+          {
+            "test_name": "test_negative_infinity",
+            "inputs": {
+              "a": "-inf",
+              "b": 1
+            },
+            "expected_output": "-inf",
+            "expected_exception": null,
+            "description": "Adding negative infinity"
+          },
+          {
+            "test_name": "test_string_input",
+            "inputs": {
+              "a": "hello",
+              "b": 1
+            },
+            "expected_output": null,
+            "expected_exception": "TypeError",
+            "description": "Tests behavior with a string input to provoke TypeError."
+          }
+        ],
+        "function_name": "add_numbers",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "tests": [
+          {
+            "test_name": "test_positive_integers",
+            "inputs": {
+              "a": 2,
+              "b": 5
+            },
+            "expected_output": 10,
+            "expected_exception": null,
+            "description": "Tests multiplication of two positive integers."
+          },
+          {
+            "test_name": "test_negative_integers",
+            "inputs": {
+              "a": -3,
+              "b": 4
+            },
+            "expected_output": -12,
+            "expected_exception": null,
+            "description": "Tests multiplication of a negative and a positive integer."
+          },
+          {
+            "test_name": "test_zero_multiplication",
+            "inputs": {
+              "a": 7,
+              "b": 0
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests multiplication with zero."
+          },
+          {
+            "test_name": "test_floating_point_numbers",
+            "inputs": {
+              "a": 3.14,
+              "b": 2.0
+            },
+            "expected_output": 6.28,
+            "expected_exception": null,
+            "description": "Tests multiplication of floating-point numbers."
+          },
+          {
+            "test_name": "test_negative_floating_point_numbers",
+            "inputs": {
+              "a": -2.5,
+              "b": 3.5
+            },
+            "expected_output": -8.75,
+            "expected_exception": null,
+            "description": "Tests multiplication of negative floating-point numbers."
+          },
+          {
+            "test_name": "test_large_integers",
+            "inputs": {
+              "a": 1000000,
+              "b": 1000000
+            },
+            "expected_output": 1000000000000,
+            "expected_exception": null,
+            "description": "Tests multiplication with large integers."
+          },
+          {
+            "test_name": "test_multiply_negative_with_negative",
+            "inputs": {
+              "a": -5,
+              "b": -2
+            },
+            "expected_output": 10,
+            "expected_exception": null,
+            "description": "Tests multiplication of two negative integers."
+          },
+          {
+            "test_name": "test_multiply_float_with_integer",
+            "inputs": {
+              "a": 2.5,
+              "b": 4
+            },
+            "expected_output": 10.0,
+            "expected_exception": null,
+            "description": "Tests multiplication of a float and an integer."
+          },
+          {
+            "test_name": "test_multiply_zero_with_negative",
+            "inputs": {
+              "a": 0,
+              "b": -5
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests multiplication of zero and a negative integer."
+          },
+          {
+            "test_name": "test_multiply_with_fractional_result",
+            "inputs": {
+              "a": 1,
+              "b": 0.5
+            },
+            "expected_output": 0.5,
+            "expected_exception": null,
+            "description": "Tests multiplication that results in a fractional float."
+          }
+        ],
+        "function_name": "multiply_numbers",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "tests": [
+          {
+            "test_name": "test_factorial_positive_number",
+            "inputs": {
+              "n": 5
+            },
+            "expected_output": 120,
+            "expected_exception": null,
+            "description": "Test with a positive integer to verify normal factorial calculation."
+          },
+          {
+            "test_name": "test_factorial_zero",
+            "inputs": {
+              "n": 0
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Test with 0, the base case for factorial."
+          },
+          {
+            "test_name": "test_factorial_one",
+            "inputs": {
+              "n": 1
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Test with 1, another base case for factorial."
+          },
+          {
+            "test_name": "test_factorial_negative_number",
+            "inputs": {
+              "n": -1
+            },
+            "expected_output": null,
+            "expected_exception": "ValueError",
+            "description": "Test with a negative number to ensure ValueError is raised."
+          },
+          {
+            "test_name": "test_factorial_large_number",
+            "inputs": {
+              "n": 10
+            },
+            "expected_output": 3628800,
+            "expected_exception": null,
+            "description": "Test with a larger positive number to verify factorial calculation accuracy."
+          },
+          {
+            "test_name": "test_factorial_another_positive",
+            "inputs": {
+              "n": 4
+            },
+            "expected_output": 24,
+            "expected_exception": null,
+            "description": "Another test case to validate factorial calculation."
+          },
+          {
+            "test_name": "test_factorial_close_to_zero",
+            "inputs": {
+              "n": 2
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Test near the base cases to ensure correct behavior"
+          },
+          {
+            "test_name": "test_factorial_negative_large",
+            "inputs": {
+              "n": -5
+            },
+            "expected_output": null,
+            "expected_exception": "ValueError",
+            "description": "Test with a large negative number to confirm ValueError handling"
+          },
+          {
+            "test_name": "test_factorial_small_positive",
+            "inputs": {
+              "n": 3
+            },
+            "expected_output": 6,
+            "expected_exception": null,
+            "description": "Test with a small positive integer."
+          },
+          {
+            "test_name": "test_factorial_edge_positive",
+            "inputs": {
+              "n": 12
+            },
+            "expected_output": 479001600,
+            "expected_exception": null,
+            "description": "Testing the edge with a positive integer that could be the highest reasonable value to calculate without hitting recursion depth issues."
+          }
+        ],
+        "function_name": "calculate_factorial",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "tests": [
+          {
+            "test_name": "test_prime_number",
+            "inputs": {
+              "n": 7
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a typical prime number."
+          },
+          {
+            "test_name": "test_non_prime_number",
+            "inputs": {
+              "n": 10
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a typical non-prime number."
+          },
+          {
+            "test_name": "test_edge_case_less_than_2",
+            "inputs": {
+              "n": 1
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests the edge case for numbers less than 2."
+          },
+          {
+            "test_name": "test_edge_case_2",
+            "inputs": {
+              "n": 2
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests the edge case for n=2, the smallest prime number."
+          },
+          {
+            "test_name": "test_edge_case_3",
+            "inputs": {
+              "n": 3
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests the edge case for n=3, a small prime number."
+          },
+          {
+            "test_name": "test_square_number_non_prime",
+            "inputs": {
+              "n": 9
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a square number (non-prime)."
+          },
+          {
+            "test_name": "test_large_prime_number",
+            "inputs": {
+              "n": 7919
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a larger prime number."
+          },
+          {
+            "test_name": "test_large_non_prime_number",
+            "inputs": {
+              "n": 7920
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a larger non-prime number."
+          },
+          {
+            "test_name": "test_zero",
+            "inputs": {
+              "n": 0
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests the case for n=0."
+          },
+          {
+            "test_name": "test_negative_number",
+            "inputs": {
+              "n": -5
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a negative number."
+          }
+        ],
+        "function_name": "is_prime",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "tests": [
+          {
+            "test_name": "test_fibonacci_zero",
+            "inputs": {
+              "n": 0
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the base case when n is 0."
+          },
+          {
+            "test_name": "test_fibonacci_one",
+            "inputs": {
+              "n": 1
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Tests the base case when n is 1."
+          },
+          {
+            "test_name": "test_fibonacci_negative",
+            "inputs": {
+              "n": -1
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the case when n is negative."
+          },
+          {
+            "test_name": "test_fibonacci_small_positive",
+            "inputs": {
+              "n": 5
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests a small positive value for n."
+          },
+          {
+            "test_name": "test_fibonacci_medium_positive",
+            "inputs": {
+              "n": 10
+            },
+            "expected_output": 55,
+            "expected_exception": null,
+            "description": "Tests a medium positive value for n."
+          },
+          {
+            "test_name": "test_fibonacci_large_positive",
+            "inputs": {
+              "n": 15
+            },
+            "expected_output": 610,
+            "expected_exception": null,
+            "description": "Tests a larger positive value for n."
+          },
+          {
+            "test_name": "test_fibonacci_large_negative",
+            "inputs": {
+              "n": -10
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests a large negative value for n."
+          },
+          {
+            "test_name": "test_fibonacci_boundary_one",
+            "inputs": {
+              "n": 2
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Tests the boundary after base cases for n=2."
+          },
+          {
+            "test_name": "test_fibonacci_edge_positive_1",
+            "inputs": {
+              "n": 3
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Test edge positive case with n = 3."
+          },
+          {
+            "test_name": "test_fibonacci_edge_positive_2",
+            "inputs": {
+              "n": 4
+            },
+            "expected_output": 3,
+            "expected_exception": null,
+            "description": "Test edge positive case with n = 4."
+          }
+        ],
+        "function_name": "fibonacci",
+        "file_path": "test_project_v2/math_utils.py"
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "tests": [
+          {
+            "test_name": "test_normal_string",
+            "inputs": {
+              "s": "hello"
+            },
+            "expected_output": "olleh",
+            "expected_exception": null,
+            "description": "Tests reversing a normal string."
+          },
+          {
+            "test_name": "test_empty_string",
+            "inputs": {
+              "s": ""
+            },
+            "expected_output": "",
+            "expected_exception": null,
+            "description": "Tests reversing an empty string."
+          },
+          {
+            "test_name": "test_string_with_spaces",
+            "inputs": {
+              "s": "hello world"
+            },
+            "expected_output": "dlrow olleh",
+            "expected_exception": null,
+            "description": "Tests reversing a string with spaces."
+          },
+          {
+            "test_name": "test_palindrome",
+            "inputs": {
+              "s": "madam"
+            },
+            "expected_output": "madam",
+            "expected_exception": null,
+            "description": "Tests reversing a palindrome string."
+          },
+          {
+            "test_name": "test_string_with_unicode",
+            "inputs": {
+              "s": "\u4f60\u597d\u4e16\u754c"
+            },
+            "expected_output": "\u754c\u4e16\u597d\u4f60",
+            "expected_exception": null,
+            "description": "Tests reversing a string with Unicode characters."
+          },
+          {
+            "test_name": "test_single_character",
+            "inputs": {
+              "s": "a"
+            },
+            "expected_output": "a",
+            "expected_exception": null,
+            "description": "Tests reversing a string with a single character."
+          },
+          {
+            "test_name": "test_long_string",
+            "inputs": {
+              "s": "This is a very long string to test the function."
+            },
+            "expected_output": ".noitcnuf eht tset ot gnirts gnol yrev a si sihT",
+            "expected_exception": null,
+            "description": "Tests reversing a very long string."
+          },
+          {
+            "test_name": "test_string_with_special_characters",
+            "inputs": {
+              "s": "!@#$%^&*()"
+            },
+            "expected_output": ")(*&^%$#@!",
+            "expected_exception": null,
+            "description": "Tests reversing a string with special characters."
+          },
+          {
+            "test_name": "test_mixed_string",
+            "inputs": {
+              "s": "Hello123World!"
+            },
+            "expected_output": "!dlroW321olleH",
+            "expected_exception": null,
+            "description": "Tests reversing a string with mixed characters, numbers, and symbols."
+          },
+          {
+            "test_name": "test_non_string_input",
+            "inputs": {
+              "s": 123
+            },
+            "expected_output": null,
+            "expected_exception": "TypeError",
+            "description": "Tests with an integer input, expecting a TypeError."
+          }
+        ],
+        "function_name": "reverse_string",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "tests": [
+          {
+            "test_name": "test_empty_string",
+            "inputs": {
+              "s": ""
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the function with an empty string."
+          },
+          {
+            "test_name": "test_no_vowels",
+            "inputs": {
+              "s": "bcdfghjklmnpqrstvwxyz"
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing no vowels."
+          },
+          {
+            "test_name": "test_all_vowels_lowercase",
+            "inputs": {
+              "s": "aeiou"
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing all lowercase vowels."
+          },
+          {
+            "test_name": "test_all_vowels_uppercase",
+            "inputs": {
+              "s": "AEIOU"
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing all uppercase vowels."
+          },
+          {
+            "test_name": "test_mixed_case_vowels",
+            "inputs": {
+              "s": "aEiOu"
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing mixed case vowels."
+          },
+          {
+            "test_name": "test_mixed_string_with_vowels",
+            "inputs": {
+              "s": "Hello World!"
+            },
+            "expected_output": 3,
+            "expected_exception": null,
+            "description": "Tests the function with a mixed string containing vowels."
+          },
+          {
+            "test_name": "test_string_with_numbers_and_vowels",
+            "inputs": {
+              "s": "1a2e3i4o5u"
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing numbers and vowels."
+          },
+          {
+            "test_name": "test_string_with_special_characters_and_vowels",
+            "inputs": {
+              "s": "!@#$%^&*(aeiou)"
+            },
+            "expected_output": 5,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing special characters and vowels."
+          },
+          {
+            "test_name": "test_long_string",
+            "inputs": {
+              "s": "This is a very long string with many vowels, including aeiouAEIOU repeated several times. aeiouAEIOUaeiouAEIOUaeiouAEIOU"
+            },
+            "expected_output": 45,
+            "expected_exception": null,
+            "description": "Tests the function with a long string containing many vowels."
+          },
+          {
+            "test_name": "test_non_ascii_characters",
+            "inputs": {
+              "s": "H\u00e9llo W\u00f8rld!"
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Tests that only ASCII vowels are counted and non-ASCII characters are ignored."
+          }
+        ],
+        "function_name": "count_vowels",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "tests": [
+          {
+            "test_name": "test_typical_palindrome",
+            "inputs": {
+              "s": "racecar"
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a typical palindrome string."
+          },
+          {
+            "test_name": "test_typical_non_palindrome",
+            "inputs": {
+              "s": "hello"
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a typical non-palindrome string."
+          },
+          {
+            "test_name": "test_palindrome_with_spaces",
+            "inputs": {
+              "s": "race car"
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a palindrome string with spaces."
+          },
+          {
+            "test_name": "test_palindrome_with_mixed_case",
+            "inputs": {
+              "s": "RaceCar"
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a palindrome string with mixed case letters."
+          },
+          {
+            "test_name": "test_palindrome_with_spaces_and_mixed_case",
+            "inputs": {
+              "s": "Race Car"
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a palindrome string with spaces and mixed case letters."
+          },
+          {
+            "test_name": "test_empty_string",
+            "inputs": {
+              "s": ""
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests an empty string."
+          },
+          {
+            "test_name": "test_string_with_only_spaces",
+            "inputs": {
+              "s": "   "
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a string containing only spaces."
+          },
+          {
+            "test_name": "test_string_with_leading_and_trailing_spaces",
+            "inputs": {
+              "s": "  racecar  "
+            },
+            "expected_output": true,
+            "expected_exception": null,
+            "description": "Tests a string with leading and trailing spaces."
+          },
+          {
+            "test_name": "test_non_palindrome_with_spaces",
+            "inputs": {
+              "s": "not a race car"
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a non-palindrome string with spaces."
+          },
+          {
+            "test_name": "test_palindrome_with_punctuation",
+            "inputs": {
+              "s": "A man, a plan, a canal: Panama"
+            },
+            "expected_output": false,
+            "expected_exception": null,
+            "description": "Tests a palindrome string with punctuation (should be false, as punctuation is not removed)."
+          }
+        ],
+        "function_name": "is_palindrome",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "tests": [
+          {
+            "test_name": "test_normal_case",
+            "inputs": {
+              "s": "hello world"
+            },
+            "expected_output": "Hello World",
+            "expected_exception": null,
+            "description": "Test with a simple string of lowercase words."
+          },
+          {
+            "test_name": "test_mixed_case",
+            "inputs": {
+              "s": "hELLo wORLd"
+            },
+            "expected_output": "Hello World",
+            "expected_exception": null,
+            "description": "Test with a string of mixed case words."
+          },
+          {
+            "test_name": "test_empty_string",
+            "inputs": {
+              "s": ""
+            },
+            "expected_output": "",
+            "expected_exception": null,
+            "description": "Test with an empty string."
+          },
+          {
+            "test_name": "test_leading_and_trailing_spaces",
+            "inputs": {
+              "s": "  hello world  "
+            },
+            "expected_output": "Hello World",
+            "expected_exception": null,
+            "description": "Test with leading and trailing spaces."
+          },
+          {
+            "test_name": "test_multiple_spaces_between_words",
+            "inputs": {
+              "s": "hello   world"
+            },
+            "expected_output": "Hello World",
+            "expected_exception": null,
+            "description": "Test with multiple spaces between words."
+          },
+          {
+            "test_name": "test_string_with_numbers",
+            "inputs": {
+              "s": "123 hello world"
+            },
+            "expected_output": "123 Hello World",
+            "expected_exception": null,
+            "description": "Test with a string containing numbers at the beginning."
+          },
+          {
+            "test_name": "test_string_with_special_characters",
+            "inputs": {
+              "s": "!@# hello world"
+            },
+            "expected_output": "!@# Hello World",
+            "expected_exception": null,
+            "description": "Test with a string containing special characters at the beginning."
+          },
+          {
+            "test_name": "test_string_with_only_spaces",
+            "inputs": {
+              "s": "   "
+            },
+            "expected_output": "",
+            "expected_exception": null,
+            "description": "Test with a string containing only spaces."
+          },
+          {
+            "test_name": "test_single_word",
+            "inputs": {
+              "s": "word"
+            },
+            "expected_output": "Word",
+            "expected_exception": null,
+            "description": "Test with a single word string."
+          },
+          {
+            "test_name": "test_string_with_unicode_characters",
+            "inputs": {
+              "s": "\u4f60\u597d\u4e16\u754c"
+            },
+            "expected_output": "\u4f60\u597d\u4e16\u754c",
+            "expected_exception": null,
+            "description": "Test with a string containing unicode characters."
+          }
+        ],
+        "function_name": "capitalize_words",
+        "file_path": "test_project_v2/string_utils.py"
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "tests": [
+          {
+            "test_name": "test_empty_string",
+            "inputs": {
+              "s": ""
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the function with an empty string. Should return 0."
+          },
+          {
+            "test_name": "test_string_with_only_whitespace",
+            "inputs": {
+              "s": "   "
+            },
+            "expected_output": 0,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing only whitespace characters. Should return 0."
+          },
+          {
+            "test_name": "test_string_with_leading_and_trailing_whitespace",
+            "inputs": {
+              "s": " word "
+            },
+            "expected_output": 1,
+            "expected_exception": null,
+            "description": "Tests the function with a string that has leading and trailing whitespace. Should return 1."
+          },
+          {
+            "test_name": "test_string_with_multiple_words",
+            "inputs": {
+              "s": "word1 word2"
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests the function with a string that has multiple words separated by spaces. Should return 2."
+          },
+          {
+            "test_name": "test_string_with_tab_characters",
+            "inputs": {
+              "s": "word1\tword2"
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing tab characters as word separators. Should return 2."
+          },
+          {
+            "test_name": "test_string_with_newline_characters",
+            "inputs": {
+              "s": "word1\nword2"
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing newline characters as word separators. Should return 2."
+          },
+          {
+            "test_name": "test_string_with_multiple_spaces_between_words",
+            "inputs": {
+              "s": "word1   word2"
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing multiple spaces between words. Should return 2."
+          },
+          {
+            "test_name": "test_string_with_mixed_whitespace",
+            "inputs": {
+              "s": "word1 \t word2\nword3"
+            },
+            "expected_output": 3,
+            "expected_exception": null,
+            "description": "Tests the function with a string containing mixed whitespace (spaces, tabs, newlines) between words. Should return 3."
+          },
+          {
+            "test_name": "test_long_string",
+            "inputs": {
+              "s": "This is a very long string with many words to test the function's performance."
+            },
+            "expected_output": 13,
+            "expected_exception": null,
+            "description": "Tests the function with a long string containing multiple words."
+          },
+          {
+            "test_name": "test_string_with_punctuation",
+            "inputs": {
+              "s": "Hello, world!"
+            },
+            "expected_output": 2,
+            "expected_exception": null,
+            "description": "Tests the function with punctuation"
+          }
+        ],
+        "function_name": "count_words",
+        "file_path": "test_project_v2/string_utils.py"
+      }
+    },
+    "test_results": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "total_tests": 11,
+        "original_passed": 9,
+        "original_failed": 2,
+        "regenerated_passed": 9,
+        "regenerated_failed": 2,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "total_tests": 10,
+        "original_passed": 10,
+        "original_failed": 0,
+        "regenerated_passed": 10,
+        "regenerated_failed": 0,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "total_tests": 10,
+        "original_passed": 4,
+        "original_failed": 6,
+        "regenerated_passed": 4,
+        "regenerated_failed": 6,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "total_tests": 10,
+        "original_passed": 10,
+        "original_failed": 0,
+        "regenerated_passed": 10,
+        "regenerated_failed": 0,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "total_tests": 10,
+        "original_passed": 4,
+        "original_failed": 6,
+        "regenerated_passed": 4,
+        "regenerated_failed": 6,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "total_tests": 10,
+        "original_passed": 10,
+        "original_failed": 0,
+        "regenerated_passed": 10,
+        "regenerated_failed": 0,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "total_tests": 10,
+        "original_passed": 9,
+        "original_failed": 1,
+        "regenerated_passed": 9,
+        "regenerated_failed": 1,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "total_tests": 10,
+        "original_passed": 10,
+        "original_failed": 0,
+        "regenerated_passed": 10,
+        "regenerated_failed": 0,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "total_tests": 10,
+        "original_passed": 10,
+        "original_failed": 0,
+        "regenerated_passed": 10,
+        "regenerated_failed": 0,
+        "failures": [],
+        "behavioral_match": true
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "total_tests": 10,
+        "original_passed": 9,
+        "original_failed": 1,
+        "regenerated_passed": 9,
+        "regenerated_failed": 1,
+        "failures": [],
+        "behavioral_match": true
+      }
+    },
+    "similarity_results": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "original_code": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n    return a + b",
+        "regenerated_code": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n\n    return a + b",
+        "similarity_metrics": {
+          "textual_similarity": 0.9923664122137404,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 1.0000000000000002,
+          "overall_similarity": 0.999618320610687,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.999618320610687,
+        "test_based_validation": true
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "original_code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b",
+        "regenerated_code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b",
+        "similarity_metrics": {
+          "textual_similarity": 1.0,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 1.0000000000000002,
+          "overall_similarity": 1.0,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 1.0,
+        "test_based_validation": true
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "original_code": "def calculate_factorial(n):\n    \"\"\"Calculate factorial of a number\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial not defined for negative numbers\")\n    if n == 0 or n == 1:\n        return 1\n    return n * calculate_factorial(n - 1)",
+        "regenerated_code": "def calculate_factorial(n: int) -> int:\n  \"\"\"Calculate factorial of a number\"\"\"\n  if n < 0:\n    raise ValueError(\"Factorial not defined for negative numbers\")\n  if n == 0 or n == 1:\n    return 1\n  else:\n    return n * calculate_factorial(n - 1)",
+        "similarity_metrics": {
+          "textual_similarity": 0.921161825726141,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.6732585337134754,
+          "overall_similarity": 0.9633839446576545,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.9633839446576545,
+        "test_based_validation": true
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "original_code": "def is_prime(n):\n    \"\"\"Check if a number is prime\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+        "regenerated_code": "def is_prime(n: int) -> bool:\n  \"\"\"Check if a number is prime\"\"\"\n  if n < 2:\n    return False\n  for i in range(2, int(n ** 0.5) + 1):\n    if n % i == 0:\n      return False\n  return True",
+        "similarity_metrics": {
+          "textual_similarity": 0.9076517150395779,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.8275882838969815,
+          "overall_similarity": 0.978141414141677,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.978141414141677,
+        "test_based_validation": true
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "original_code": "def fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number\"\"\"\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)",
+        "regenerated_code": "def fibonacci(n: int) -> int:\n  \"\"\"Calculate nth Fibonacci number\"\"\"\n  if n <= 0:\n    return 0\n  if n == 1:\n    return 1\n  return fibonacci(n - 1) + fibonacci(n - 2)",
+        "similarity_metrics": {
+          "textual_similarity": 0.8742857142857143,
+          "structural_similarity": 0.8292682926829268,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.4630140843498944,
+          "overall_similarity": 0.8802595965882994,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.8802595965882994,
+        "test_based_validation": true
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "original_code": "def reverse_string(s):\n    \"\"\"Reverse a string\"\"\"\n    return s[::-1]",
+        "regenerated_code": "def reverse_string(s: str) -> str:\n  \"\"\"Reverse a string\"\"\"\n  return s[::-1]",
+        "similarity_metrics": {
+          "textual_similarity": 0.8888888888888888,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.2910691023819054,
+          "overall_similarity": 0.9235513546826349,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.9235513546826349,
+        "test_based_validation": true
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "original_code": "def count_vowels(s):\n    \"\"\"Count vowels in a string\"\"\"\n    vowels = 'aeiouAEIOU'\n    return sum(1 for char in s if char in vowels)",
+        "regenerated_code": "def count_vowels(s: str) -> int:\n  \"\"\"Count vowels in a string\"\"\"\n  vowels = 'aeiouAEIOU'\n  return sum(1 for char in s if char in vowels)",
+        "similarity_metrics": {
+          "textual_similarity": 0.9328358208955224,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.7806740458710526,
+          "overall_similarity": 0.9747091956318814,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.9747091956318814,
+        "test_based_validation": true
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "original_code": "def is_palindrome(s):\n    \"\"\"Check if a string is a palindrome\"\"\"\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]",
+        "regenerated_code": "def is_palindrome(s: str) -> bool:\n  \"\"\"Check if a string is a palindrome\"\"\"\n  s = s.lower()\n  s = s.replace(' ', '')\n  return s == s[::-1]",
+        "similarity_metrics": {
+          "textual_similarity": 0.8973384030418251,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.45017550232699,
+          "overall_similarity": 0.9398844703847903,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.9398844703847903,
+        "test_based_validation": true
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "original_code": "def capitalize_words(s):\n    \"\"\"Capitalize each word in a string\"\"\"\n    return ' '.join(word.capitalize() for word in s.split())",
+        "regenerated_code": "def capitalize_words(s: str) -> str:\n  \"\"\"Capitalize each word in a string\"\"\"\n  return ' '.join(word.capitalize() for word in s.split())",
+        "similarity_metrics": {
+          "textual_similarity": 0.9393939393939394,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.6660571951261314,
+          "overall_similarity": 0.9635754164823102,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.9635754164823102,
+        "test_based_validation": true
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "original_code": "def count_words(s):\n    \"\"\"Count words in a string\"\"\"\n    return len(s.split())",
+        "regenerated_code": "def count_words(s: str) -> int:\n    \"\"\"Count words in a string\"\"\"\n    words_list = s.split()\n    word_count = len(words_list)\n    return word_count",
+        "similarity_metrics": {
+          "textual_similarity": 0.6283185840707964,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.1813613394793215,
+          "overall_similarity": 0.8995520631514718,
+          "behavioral_test_similarity": 1.0
+        },
+        "overall_similarity": 0.8995520631514718,
+        "test_based_validation": true
+      }
+    },
+    "similarity_history": [
+      0.999618320610687,
+      1.0,
+      0.9633839446576545,
+      0.978141414141677,
+      0.8802595965882994,
+      0.9235513546826349,
+      0.9747091956318814,
+      0.9398844703847903,
+      0.9635754164823102,
+      0.8995520631514718
+    ],
+    "feedback_data": {
+      "test_project_v2/math_utils.py::fibonacci": {
+        "gaps": [
+          "Semantic differences: Code meaning and context differ"
+        ],
+        "metrics": {
+          "textual_similarity": 0.8742857142857143,
+          "structural_similarity": 0.8292682926829268,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.4630140843498944,
+          "overall_similarity": 0.8802595965882994,
+          "behavioral_test_similarity": 1.0
+        },
+        "iteration": 1
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "gaps": [
+          "Semantic differences: Code meaning and context differ",
+          "Textual differences: Surface-level code text differs"
+        ],
+        "metrics": {
+          "textual_similarity": 0.6283185840707964,
+          "structural_similarity": 1.0,
+          "behavioral_similarity": 1.0,
+          "semantic_similarity": 0.1813613394793215,
+          "overall_similarity": 0.8995520631514718,
+          "behavioral_test_similarity": 1.0
+        },
+        "iteration": 1
+      }
+    },
+    "runtime_feedback": {},
+    "convergence_achieved": true,
+    "analyzed_files": {
+      "test_project_v2/math_utils.py": {
+        "file_path": "test_project_v2/math_utils.py",
+        "functions": {
+          "add_numbers": {
+            "name": "add_numbers",
+            "line_number": 5,
+            "args": [
+              "a",
+              "b"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Add two numbers",
+            "complexity": 1,
+            "calls": [],
+            "source": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n    return a + b"
+          },
+          "multiply_numbers": {
+            "name": "multiply_numbers",
+            "line_number": 10,
+            "args": [
+              "a",
+              "b"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Multiply two numbers",
+            "complexity": 1,
+            "calls": [],
+            "source": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b"
+          },
+          "calculate_factorial": {
+            "name": "calculate_factorial",
+            "line_number": 15,
+            "args": [
+              "n"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Calculate factorial of a number",
+            "complexity": 4,
+            "calls": [
+              "ValueError",
+              "calculate_factorial"
+            ],
+            "source": "def calculate_factorial(n):\n    \"\"\"Calculate factorial of a number\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial not defined for negative numbers\")\n    if n == 0 or n == 1:\n        return 1\n    return n * calculate_factorial(n - 1)"
+          },
+          "is_prime": {
+            "name": "is_prime",
+            "line_number": 24,
+            "args": [
+              "n"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Check if a number is prime",
+            "complexity": 4,
+            "calls": [
+              "range",
+              "int"
+            ],
+            "source": "def is_prime(n):\n    \"\"\"Check if a number is prime\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True"
+          },
+          "fibonacci": {
+            "name": "fibonacci",
+            "line_number": 34,
+            "args": [
+              "n"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Calculate nth Fibonacci number",
+            "complexity": 3,
+            "calls": [
+              "fibonacci",
+              "fibonacci"
+            ],
+            "source": "def fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number\"\"\"\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)"
+          }
+        },
+        "imports": [],
+        "classes": {},
+        "complexity": 9
+      },
+      "test_project_v2/string_utils.py": {
+        "file_path": "test_project_v2/string_utils.py",
+        "functions": {
+          "reverse_string": {
+            "name": "reverse_string",
+            "line_number": 5,
+            "args": [
+              "s"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Reverse a string",
+            "complexity": 1,
+            "calls": [],
+            "source": "def reverse_string(s):\n    \"\"\"Reverse a string\"\"\"\n    return s[::-1]"
+          },
+          "count_vowels": {
+            "name": "count_vowels",
+            "line_number": 10,
+            "args": [
+              "s"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Count vowels in a string",
+            "complexity": 1,
+            "calls": [
+              "sum"
+            ],
+            "source": "def count_vowels(s):\n    \"\"\"Count vowels in a string\"\"\"\n    vowels = 'aeiouAEIOU'\n    return sum(1 for char in s if char in vowels)"
+          },
+          "is_palindrome": {
+            "name": "is_palindrome",
+            "line_number": 16,
+            "args": [
+              "s"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Check if a string is a palindrome",
+            "complexity": 1,
+            "calls": [
+              "s.lower"
+            ],
+            "source": "def is_palindrome(s):\n    \"\"\"Check if a string is a palindrome\"\"\"\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]"
+          },
+          "capitalize_words": {
+            "name": "capitalize_words",
+            "line_number": 22,
+            "args": [
+              "s"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Capitalize each word in a string",
+            "complexity": 1,
+            "calls": [
+              "word.capitalize",
+              "s.split"
+            ],
+            "source": "def capitalize_words(s):\n    \"\"\"Capitalize each word in a string\"\"\"\n    return ' '.join(word.capitalize() for word in s.split())"
+          },
+          "count_words": {
+            "name": "count_words",
+            "line_number": 27,
+            "args": [
+              "s"
+            ],
+            "defaults": [],
+            "returns": null,
+            "decorators": [],
+            "docstring": "Count words in a string",
+            "complexity": 1,
+            "calls": [
+              "len",
+              "s.split"
+            ],
+            "source": "def count_words(s):\n    \"\"\"Count words in a string\"\"\"\n    return len(s.split())"
+          }
+        },
+        "imports": [],
+        "classes": {},
+        "complexity": 1
+      }
+    },
+    "all_functions": {
+      "test_project_v2/math_utils.py::add_numbers": {
+        "file_path": "test_project_v2/math_utils.py",
+        "function_name": "add_numbers",
+        "source_code": "def add_numbers(a, b):\n    \"\"\"Add two numbers\"\"\"\n    return a + b",
+        "complexity": 1,
+        "dependencies": [],
+        "line_number": 5,
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::multiply_numbers": {
+        "file_path": "test_project_v2/math_utils.py",
+        "function_name": "multiply_numbers",
+        "source_code": "def multiply_numbers(a, b):\n    \"\"\"Multiply two numbers\"\"\"\n    return a * b",
+        "complexity": 1,
+        "dependencies": [],
+        "line_number": 10,
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::calculate_factorial": {
+        "file_path": "test_project_v2/math_utils.py",
+        "function_name": "calculate_factorial",
+        "source_code": "def calculate_factorial(n):\n    \"\"\"Calculate factorial of a number\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial not defined for negative numbers\")\n    if n == 0 or n == 1:\n        return 1\n    return n * calculate_factorial(n - 1)",
+        "complexity": 4,
+        "dependencies": [
+          "ValueError",
+          "calculate_factorial"
+        ],
+        "line_number": 15,
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::is_prime": {
+        "file_path": "test_project_v2/math_utils.py",
+        "function_name": "is_prime",
+        "source_code": "def is_prime(n):\n    \"\"\"Check if a number is prime\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+        "complexity": 4,
+        "dependencies": [
+          "range",
+          "int"
+        ],
+        "line_number": 24,
+        "imports": []
+      },
+      "test_project_v2/math_utils.py::fibonacci": {
+        "file_path": "test_project_v2/math_utils.py",
+        "function_name": "fibonacci",
+        "source_code": "def fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number\"\"\"\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)",
+        "complexity": 3,
+        "dependencies": [
+          "fibonacci",
+          "fibonacci"
+        ],
+        "line_number": 34,
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::reverse_string": {
+        "file_path": "test_project_v2/string_utils.py",
+        "function_name": "reverse_string",
+        "source_code": "def reverse_string(s):\n    \"\"\"Reverse a string\"\"\"\n    return s[::-1]",
+        "complexity": 1,
+        "dependencies": [],
+        "line_number": 5,
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::count_vowels": {
+        "file_path": "test_project_v2/string_utils.py",
+        "function_name": "count_vowels",
+        "source_code": "def count_vowels(s):\n    \"\"\"Count vowels in a string\"\"\"\n    vowels = 'aeiouAEIOU'\n    return sum(1 for char in s if char in vowels)",
+        "complexity": 1,
+        "dependencies": [
+          "sum"
+        ],
+        "line_number": 10,
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::is_palindrome": {
+        "file_path": "test_project_v2/string_utils.py",
+        "function_name": "is_palindrome",
+        "source_code": "def is_palindrome(s):\n    \"\"\"Check if a string is a palindrome\"\"\"\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]",
+        "complexity": 1,
+        "dependencies": [
+          "s.lower"
+        ],
+        "line_number": 16,
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::capitalize_words": {
+        "file_path": "test_project_v2/string_utils.py",
+        "function_name": "capitalize_words",
+        "source_code": "def capitalize_words(s):\n    \"\"\"Capitalize each word in a string\"\"\"\n    return ' '.join(word.capitalize() for word in s.split())",
+        "complexity": 1,
+        "dependencies": [
+          "word.capitalize",
+          "s.split"
+        ],
+        "line_number": 22,
+        "imports": []
+      },
+      "test_project_v2/string_utils.py::count_words": {
+        "file_path": "test_project_v2/string_utils.py",
+        "function_name": "count_words",
+        "source_code": "def count_words(s):\n    \"\"\"Count words in a string\"\"\"\n    return len(s.split())",
+        "complexity": 1,
+        "dependencies": [
+          "len",
+          "s.split"
+        ],
+        "line_number": 27,
+        "imports": []
+      }
+    },
+    "total_functions": 10,
+    "convergence_reason": "Target similarity achieved for 8/10 functions",
+    "convergence_rate": 0.8
+  },
+  "timestamp": 1761670274.36169
+}

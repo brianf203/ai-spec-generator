@@ -1,0 +1,120 @@
+{
+  "success": true,
+  "function_name": "fibonacci",
+  "file_path": "test_project_v2/math_utils.py",
+  "specification": {
+    "specification": {
+      "function_name": "fibonacci",
+      "file_path": "test_project_v2/math_utils.py",
+      "description": "Calculates the nth Fibonacci number using recursion.",
+      "complexity": 3,
+      "dependencies": [
+        "fibonacci",
+        "fibonacci"
+      ],
+      "imports": [],
+      "function_signature": {
+        "name": "fibonacci",
+        "parameters": [
+          {
+            "name": "n",
+            "type": "int",
+            "description": "The index of the Fibonacci number to calculate (starting from 0).",
+            "default": null
+          }
+        ],
+        "return_type": "int",
+        "description": "Returns the nth Fibonacci number."
+      },
+      "docstring": "Calculate nth Fibonacci number",
+      "base_cases": [
+        {
+          "condition": "n <= 0",
+          "return_value": 0,
+          "description": "If n is less than or equal to 0, the function returns 0.  This handles the F(0) case and negative inputs."
+        },
+        {
+          "condition": "n == 1",
+          "return_value": 1,
+          "description": "If n is equal to 1, the function returns 1. This handles the F(1) case."
+        }
+      ],
+      "recursive_cases": [
+        {
+          "condition": "n > 1",
+          "logic": "The function recursively calls itself twice: once with n-1 and once with n-2.  The results of these two calls are added together and returned.",
+          "recursive_calls": [
+            {
+              "function_name": "fibonacci",
+              "arguments": [
+                "n - 1"
+              ],
+              "description": "Calculates the (n-1)th Fibonacci number."
+            },
+            {
+              "function_name": "fibonacci",
+              "arguments": [
+                "n - 2"
+              ],
+              "description": "Calculates the (n-2)th Fibonacci number."
+            }
+          ],
+          "return_value": "fibonacci(n - 1) + fibonacci(n - 2)",
+          "description": "The sum of the (n-1)th and (n-2)th Fibonacci numbers."
+        }
+      ],
+      "internal_logic": {
+        "control_flow": "The function first checks the base cases. If neither base case is met, it proceeds to the recursive case. The recursive case makes two recursive calls and returns their sum.",
+        "variable_names": [
+          {
+            "name": "n",
+            "purpose": "Represents the index of the Fibonacci number being calculated."
+          }
+        ]
+      },
+      "error_handling": {
+        "patterns": "No explicit error handling. Negative input values are handled by returning 0.",
+        "description": "The function does not raise any exceptions.  Negative input is considered a base case and returns 0."
+      },
+      "edge_cases": [
+        {
+          "input": 0,
+          "expected_output": 0,
+          "description": "Handles the base case for F(0)."
+        },
+        {
+          "input": 1,
+          "expected_output": 1,
+          "description": "Handles the base case for F(1)."
+        },
+        {
+          "input": -1,
+          "expected_output": 0,
+          "description": "Handles negative input values by returning 0."
+        }
+      ],
+      "side_effects": {
+        "description": "No side effects. The function is purely functional."
+      },
+      "state_changes": {
+        "description": "No state changes. The function does not modify any external state."
+      },
+      "recursion_depth": {
+        "description": "The recursion depth depends on the input value 'n'. It will be proportional to 'n' and can lead to stack overflow errors for large values of 'n' due to exponential time complexity."
+      },
+      "termination_conditions": {
+        "description": "The recursion terminates when either n <= 0 or n == 1. These are the base cases that provide a direct return value without further recursion."
+      },
+      "algorithmic_logic": {
+        "description": "The function implements the standard recursive definition of the Fibonacci sequence: F(n) = F(n-1) + F(n-2), with base cases F(0) = 0 and F(1) = 1."
+      }
+    }
+  },
+  "complexity": 3,
+  "dependencies": [
+    "fibonacci",
+    "fibonacci"
+  ],
+  "original_code": "def fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number\"\"\"\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)",
+  "imports": []
+}

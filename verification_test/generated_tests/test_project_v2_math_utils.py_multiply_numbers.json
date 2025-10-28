@@ -1,0 +1,106 @@
+{
+  "tests": [
+    {
+      "test_name": "test_positive_integers",
+      "inputs": {
+        "a": 2,
+        "b": 5
+      },
+      "expected_output": 10,
+      "expected_exception": null,
+      "description": "Tests multiplication of two positive integers."
+    },
+    {
+      "test_name": "test_negative_integers",
+      "inputs": {
+        "a": -3,
+        "b": 4
+      },
+      "expected_output": -12,
+      "expected_exception": null,
+      "description": "Tests multiplication of a negative and a positive integer."
+    },
+    {
+      "test_name": "test_zero_multiplication",
+      "inputs": {
+        "a": 7,
+        "b": 0
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests multiplication with zero."
+    },
+    {
+      "test_name": "test_floating_point_numbers",
+      "inputs": {
+        "a": 3.14,
+        "b": 2.0
+      },
+      "expected_output": 6.28,
+      "expected_exception": null,
+      "description": "Tests multiplication of floating-point numbers."
+    },
+    {
+      "test_name": "test_negative_floating_point_numbers",
+      "inputs": {
+        "a": -2.5,
+        "b": 3.5
+      },
+      "expected_output": -8.75,
+      "expected_exception": null,
+      "description": "Tests multiplication of negative floating-point numbers."
+    },
+    {
+      "test_name": "test_large_integers",
+      "inputs": {
+        "a": 1000000,
+        "b": 1000000
+      },
+      "expected_output": 1000000000000,
+      "expected_exception": null,
+      "description": "Tests multiplication with large integers."
+    },
+    {
+      "test_name": "test_multiply_negative_with_negative",
+      "inputs": {
+        "a": -5,
+        "b": -2
+      },
+      "expected_output": 10,
+      "expected_exception": null,
+      "description": "Tests multiplication of two negative integers."
+    },
+    {
+      "test_name": "test_multiply_float_with_integer",
+      "inputs": {
+        "a": 2.5,
+        "b": 4
+      },
+      "expected_output": 10.0,
+      "expected_exception": null,
+      "description": "Tests multiplication of a float and an integer."
+    },
+    {
+      "test_name": "test_multiply_zero_with_negative",
+      "inputs": {
+        "a": 0,
+        "b": -5
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests multiplication of zero and a negative integer."
+    },
+    {
+      "test_name": "test_multiply_with_fractional_result",
+      "inputs": {
+        "a": 1,
+        "b": 0.5
+      },
+      "expected_output": 0.5,
+      "expected_exception": null,
+      "description": "Tests multiplication that results in a fractional float."
+    }
+  ],
+  "function_name": "multiply_numbers",
+  "file_path": "test_project_v2/math_utils.py"
+}

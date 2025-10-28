@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_prime_number",
+      "inputs": {
+        "n": 7
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a typical prime number."
+    },
+    {
+      "test_name": "test_non_prime_number",
+      "inputs": {
+        "n": 10
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a typical non-prime number."
+    },
+    {
+      "test_name": "test_edge_case_less_than_2",
+      "inputs": {
+        "n": 1
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests the edge case for numbers less than 2."
+    },
+    {
+      "test_name": "test_edge_case_2",
+      "inputs": {
+        "n": 2
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests the edge case for n=2, the smallest prime number."
+    },
+    {
+      "test_name": "test_edge_case_3",
+      "inputs": {
+        "n": 3
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests the edge case for n=3, a small prime number."
+    },
+    {
+      "test_name": "test_square_number_non_prime",
+      "inputs": {
+        "n": 9
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a square number (non-prime)."
+    },
+    {
+      "test_name": "test_large_prime_number",
+      "inputs": {
+        "n": 7919
+      },
+      "expected_output": true,
+      "expected_exception": null,
+      "description": "Tests a larger prime number."
+    },
+    {
+      "test_name": "test_large_non_prime_number",
+      "inputs": {
+        "n": 7920
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a larger non-prime number."
+    },
+    {
+      "test_name": "test_zero",
+      "inputs": {
+        "n": 0
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests the case for n=0."
+    },
+    {
+      "test_name": "test_negative_number",
+      "inputs": {
+        "n": -5
+      },
+      "expected_output": false,
+      "expected_exception": null,
+      "description": "Tests a negative number."
+    }
+  ],
+  "function_name": "is_prime",
+  "file_path": "test_project_v2/math_utils.py"
+}

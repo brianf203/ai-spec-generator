@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_name": "test_positive_integers",
+      "inputs": {
+        "a": 5,
+        "b": 3
+      },
+      "expected_output": 8,
+      "expected_exception": null,
+      "description": "Tests addition of two positive integers."
+    },
+    {
+      "test_name": "test_positive_floats",
+      "inputs": {
+        "a": 2.5,
+        "b": 7.5
+      },
+      "expected_output": 10.0,
+      "expected_exception": null,
+      "description": "Tests addition of two positive floats."
+    },
+    {
+      "test_name": "test_negative_integers",
+      "inputs": {
+        "a": -5,
+        "b": -3
+      },
+      "expected_output": -8,
+      "expected_exception": null,
+      "description": "Tests addition of two negative integers."
+    },
+    {
+      "test_name": "test_mixed_integers",
+      "inputs": {
+        "a": 5,
+        "b": -3
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests addition of a positive and a negative integer."
+    },
+    {
+      "test_name": "test_mixed_floats",
+      "inputs": {
+        "a": -2.5,
+        "b": 7.5
+      },
+      "expected_output": 5.0,
+      "expected_exception": null,
+      "description": "Tests addition of a negative and a positive float."
+    },
+    {
+      "test_name": "test_zero",
+      "inputs": {
+        "a": 0,
+        "b": 0
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests addition of zero to zero."
+    },
+    {
+      "test_name": "test_large_numbers",
+      "inputs": {
+        "a": 10000000000.0,
+        "b": 10000000000.0
+      },
+      "expected_output": 20000000000.0,
+      "expected_exception": null,
+      "description": "Tests addition of two very large numbers."
+    },
+    {
+      "test_name": "test_large_negative_and_positive",
+      "inputs": {
+        "a": -10000000000.0,
+        "b": 10000000000.0
+      },
+      "expected_output": 0.0,
+      "expected_exception": null,
+      "description": "Adding large negative and positive number"
+    },
+    {
+      "test_name": "test_infinity",
+      "inputs": {
+        "a": "inf",
+        "b": 1
+      },
+      "expected_output": "inf",
+      "expected_exception": null,
+      "description": "Adding infinity"
+    },
+    {
+      "test_name": "test_negative_infinity",
+      "inputs": {
+        "a": "-inf",
+        "b": 1
+      },
+      "expected_output": "-inf",
+      "expected_exception": null,
+      "description": "Adding negative infinity"
+    },
+    {
+      "test_name": "test_string_input",
+      "inputs": {
+        "a": "hello",
+        "b": 1
+      },
+      "expected_output": null,
+      "expected_exception": "TypeError",
+      "description": "Tests behavior with a string input to provoke TypeError."
+    }
+  ],
+  "function_name": "add_numbers",
+  "file_path": "test_project_v2/math_utils.py"
+}

@@ -1,0 +1,103 @@
+{
+  "success": true,
+  "function_name": "is_prime",
+  "file_path": "test_project_v2/math_utils.py",
+  "specification": {
+    "function_name": "is_prime",
+    "file_path": "test_project_v2/math_utils.py",
+    "description": "Determines if a given number is a prime number.",
+    "signature": {
+      "name": "is_prime",
+      "parameters": [
+        {
+          "name": "n",
+          "type": "int",
+          "description": "The number to check for primality."
+        }
+      ],
+      "return_type": "bool",
+      "return_value_description": "True if the input number is prime, False otherwise."
+    },
+    "implementation_details": {
+      "algorithm": "Iterative primality test using trial division up to the square root of the input number.",
+      "logic": [
+        {
+          "step": 1,
+          "description": "Handle base cases: If n is less than 2, it's not prime. Return False.",
+          "code_equivalent": "if n < 2: return False"
+        },
+        {
+          "step": 2,
+          "description": "Iterate from 2 up to the integer part of the square root of n (inclusive).",
+          "code_equivalent": "for i in range(2, int(n ** 0.5) + 1):"
+        },
+        {
+          "step": 3,
+          "description": "For each number i in the iteration, check if n is divisible by i. If it is, n is not prime. Return False.",
+          "code_equivalent": "if n % i == 0: return False"
+        },
+        {
+          "step": 4,
+          "description": "If the loop completes without finding a divisor, n is prime. Return True.",
+          "code_equivalent": "return True"
+        }
+      ],
+      "variable_names": {
+        "n": {
+          "purpose": "The input number to be checked for primality.",
+          "type": "int"
+        },
+        "i": {
+          "purpose": "The iterator variable used to test divisibility. Ranges from 2 to the square root of n.",
+          "type": "int"
+        }
+      },
+      "control_flow": {
+        "conditional_statements": [
+          {
+            "type": "if",
+            "condition": "n < 2",
+            "action": "Return False (base case)"
+          },
+          {
+            "type": "if",
+            "condition": "n % i == 0",
+            "action": "Return False (n is divisible by i)"
+          }
+        ],
+        "loop": {
+          "type": "for",
+          "range": "range(2, int(n ** 0.5) + 1)",
+          "purpose": "Iterate through potential divisors"
+        }
+      }
+    },
+    "documentation": {
+      "docstring": "Check if a number is prime"
+    },
+    "error_handling": {
+      "none": "No specific error handling is implemented. Negative numbers and non-integer inputs will produce potentially unexpected results due to implicit type conversion or simply by the `n < 2` check.  Explicit type checking or error raising is not present."
+    },
+    "edge_cases": {
+      "n < 2": "Returns False for numbers less than 2, as they are not prime.",
+      "n = 2": "Returns True as 2 is the smallest prime number.",
+      "n = 3": "Returns True as 3 is a prime number.",
+      "large_n": "The function will still correctly identify large prime numbers, but the execution time will increase as the square root of n increases."
+    },
+    "dependencies": [
+      "range",
+      "int"
+    ],
+    "imports": [],
+    "side_effects": "None. The function does not modify any external state.",
+    "complexity": 4,
+    "additional_notes": "The function uses an efficient primality test by only checking divisors up to the square root of the input number.  The use of `int(n ** 0.5) + 1` ensures that the square root is correctly handled for both perfect squares and non-perfect squares. It is crucial to maintain the exact spacing, docstring and names provided in the original Python snippet to assure that LLM generates the exact code. The use of exponentiation operator `**` should be maintained rather than using math.sqrt to improve similarity"
+  },
+  "complexity": 4,
+  "dependencies": [
+    "range",
+    "int"
+  ],
+  "original_code": "def is_prime(n):\n    \"\"\"Check if a number is prime\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+  "imports": []
+}

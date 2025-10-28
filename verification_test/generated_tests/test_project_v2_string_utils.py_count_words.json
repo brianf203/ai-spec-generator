@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_empty_string",
+      "inputs": {
+        "s": ""
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the function with an empty string. Should return 0."
+    },
+    {
+      "test_name": "test_string_with_only_whitespace",
+      "inputs": {
+        "s": "   "
+      },
+      "expected_output": 0,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing only whitespace characters. Should return 0."
+    },
+    {
+      "test_name": "test_string_with_leading_and_trailing_whitespace",
+      "inputs": {
+        "s": " word "
+      },
+      "expected_output": 1,
+      "expected_exception": null,
+      "description": "Tests the function with a string that has leading and trailing whitespace. Should return 1."
+    },
+    {
+      "test_name": "test_string_with_multiple_words",
+      "inputs": {
+        "s": "word1 word2"
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests the function with a string that has multiple words separated by spaces. Should return 2."
+    },
+    {
+      "test_name": "test_string_with_tab_characters",
+      "inputs": {
+        "s": "word1\tword2"
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing tab characters as word separators. Should return 2."
+    },
+    {
+      "test_name": "test_string_with_newline_characters",
+      "inputs": {
+        "s": "word1\nword2"
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing newline characters as word separators. Should return 2."
+    },
+    {
+      "test_name": "test_string_with_multiple_spaces_between_words",
+      "inputs": {
+        "s": "word1   word2"
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing multiple spaces between words. Should return 2."
+    },
+    {
+      "test_name": "test_string_with_mixed_whitespace",
+      "inputs": {
+        "s": "word1 \t word2\nword3"
+      },
+      "expected_output": 3,
+      "expected_exception": null,
+      "description": "Tests the function with a string containing mixed whitespace (spaces, tabs, newlines) between words. Should return 3."
+    },
+    {
+      "test_name": "test_long_string",
+      "inputs": {
+        "s": "This is a very long string with many words to test the function's performance."
+      },
+      "expected_output": 13,
+      "expected_exception": null,
+      "description": "Tests the function with a long string containing multiple words."
+    },
+    {
+      "test_name": "test_string_with_punctuation",
+      "inputs": {
+        "s": "Hello, world!"
+      },
+      "expected_output": 2,
+      "expected_exception": null,
+      "description": "Tests the function with punctuation"
+    }
+  ],
+  "function_name": "count_words",
+  "file_path": "test_project_v2/string_utils.py"
+}

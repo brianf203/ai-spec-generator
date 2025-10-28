@@ -1,0 +1,26 @@
+# Core dependencies
+google-generativeai>=0.8.0
+requests>=2.31.0
+pyyaml>=6.0.0
+tqdm>=4.65.0
+
+# Code analysis and similarity
+tree-sitter>=0.20.0
+tree-sitter-python>=0.20.0
+ast-comments>=0.1.0
+pycode-similar>=1.0.0
+nltk>=3.8.0
+scikit-learn>=1.3.0
+networkx>=3.1.0
+
+# Data processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Testing and validation
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Utilities
+colorama>=0.4.6
+pathlib2>=2.3.7

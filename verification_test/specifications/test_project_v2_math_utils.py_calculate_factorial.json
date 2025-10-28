@@ -1,0 +1,76 @@
+{
+  "success": true,
+  "function_name": "calculate_factorial",
+  "file_path": "test_project_v2/math_utils.py",
+  "specification": {
+    "function_specification": {
+      "function_name": "calculate_factorial",
+      "description": "Calculates the factorial of a non-negative integer using recursion.",
+      "file_path": "test_project_v2/math_utils.py",
+      "imports": [],
+      "signature": {
+        "parameters": [
+          {
+            "name": "n",
+            "type": "int",
+            "description": "The non-negative integer for which to calculate the factorial.",
+            "default": null
+          }
+        ],
+        "return_type": "int",
+        "return_value": "The factorial of n. Returns 1 if n is 0 or 1. Raises ValueError if n is negative."
+      },
+      "internal_logic": {
+        "error_handling": {
+          "condition": "If n is less than 0",
+          "action": "Raise a ValueError exception with the message 'Factorial not defined for negative numbers'.",
+          "exception_type": "ValueError",
+          "message": "Factorial not defined for negative numbers"
+        },
+        "base_case": {
+          "conditions": [
+            "n == 0",
+            "n == 1"
+          ],
+          "action": "Return 1."
+        },
+        "recursive_case": {
+          "condition": "If n is greater than 1",
+          "action": "Return n multiplied by the result of calling calculate_factorial with the argument n - 1.",
+          "recursive_call": "calculate_factorial(n - 1)"
+        },
+        "control_flow": "The function first checks if n is negative. If it is, a ValueError is raised.  If n is 0 or 1, the function returns 1. Otherwise, the function recursively calls itself with the argument n-1 and returns the product of n and the result of the recursive call."
+      },
+      "variable_names": [
+        {
+          "name": "n",
+          "purpose": "Represents the input number for which the factorial is calculated."
+        }
+      ],
+      "comments_and_docstrings": {
+        "function_docstring": "Calculate factorial of a number"
+      },
+      "edge_cases_and_special_conditions": {
+        "negative_input": "If n is negative, a ValueError is raised.",
+        "zero_or_one_input": "If n is 0 or 1, the function returns 1."
+      },
+      "dependencies": [
+        "ValueError",
+        "calculate_factorial (recursive call)"
+      ],
+      "side_effects_and_state_changes": "None. The function is pure and has no side effects.",
+      "recursion_details": {
+        "recursion_depth": "The maximum recursion depth is n.  The function recurses n-1 times.",
+        "termination_conditions": "The recursion terminates when n is 0 or 1."
+      },
+      "algorithmic_logic": "The function implements the standard recursive definition of the factorial function: factorial(n) = n * factorial(n-1) for n > 1, and factorial(0) = factorial(1) = 1."
+    }
+  },
+  "complexity": 4,
+  "dependencies": [
+    "ValueError",
+    "calculate_factorial"
+  ],
+  "original_code": "def calculate_factorial(n):\n    \"\"\"Calculate factorial of a number\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial not defined for negative numbers\")\n    if n == 0 or n == 1:\n        return 1\n    return n * calculate_factorial(n - 1)",
+  "imports": []
+}

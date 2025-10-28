@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "test_name": "test_normal_string",
+      "inputs": {
+        "s": "hello"
+      },
+      "expected_output": "olleh",
+      "expected_exception": null,
+      "description": "Tests reversing a normal string."
+    },
+    {
+      "test_name": "test_empty_string",
+      "inputs": {
+        "s": ""
+      },
+      "expected_output": "",
+      "expected_exception": null,
+      "description": "Tests reversing an empty string."
+    },
+    {
+      "test_name": "test_string_with_spaces",
+      "inputs": {
+        "s": "hello world"
+      },
+      "expected_output": "dlrow olleh",
+      "expected_exception": null,
+      "description": "Tests reversing a string with spaces."
+    },
+    {
+      "test_name": "test_palindrome",
+      "inputs": {
+        "s": "madam"
+      },
+      "expected_output": "madam",
+      "expected_exception": null,
+      "description": "Tests reversing a palindrome string."
+    },
+    {
+      "test_name": "test_string_with_unicode",
+      "inputs": {
+        "s": "\u4f60\u597d\u4e16\u754c"
+      },
+      "expected_output": "\u754c\u4e16\u597d\u4f60",
+      "expected_exception": null,
+      "description": "Tests reversing a string with Unicode characters."
+    },
+    {
+      "test_name": "test_single_character",
+      "inputs": {
+        "s": "a"
+      },
+      "expected_output": "a",
+      "expected_exception": null,
+      "description": "Tests reversing a string with a single character."
+    },
+    {
+      "test_name": "test_long_string",
+      "inputs": {
+        "s": "This is a very long string to test the function."
+      },
+      "expected_output": ".noitcnuf eht tset ot gnirts gnol yrev a si sihT",
+      "expected_exception": null,
+      "description": "Tests reversing a very long string."
+    },
+    {
+      "test_name": "test_string_with_special_characters",
+      "inputs": {
+        "s": "!@#$%^&*()"
+      },
+      "expected_output": ")(*&^%$#@!",
+      "expected_exception": null,
+      "description": "Tests reversing a string with special characters."
+    },
+    {
+      "test_name": "test_mixed_string",
+      "inputs": {
+        "s": "Hello123World!"
+      },
+      "expected_output": "!dlroW321olleH",
+      "expected_exception": null,
+      "description": "Tests reversing a string with mixed characters, numbers, and symbols."
+    },
+    {
+      "test_name": "test_non_string_input",
+      "inputs": {
+        "s": 123
+      },
+      "expected_output": null,
+      "expected_exception": "TypeError",
+      "description": "Tests with an integer input, expecting a TypeError."
+    }
+  ],
+  "function_name": "reverse_string",
+  "file_path": "test_project_v2/string_utils.py"
+}
