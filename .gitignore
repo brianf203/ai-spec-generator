@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+output*/
+*.egg-info/
+
+# Excluded from repo
+main.tex
+references.bib
+run_large_benchmark.py
+run_medium_benchmark.py
+run_small_benchmark.py
+run_new_benchmark.py
+create_benchmark_projects.py
+*_log.txt
+*.log
