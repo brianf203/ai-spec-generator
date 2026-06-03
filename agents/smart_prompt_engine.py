@@ -737,11 +737,18 @@ class PromptOptimizer:
         return optimized_prompt
     
     def _generate_gap_instructions(self, gaps: List[str]) -> str:
-        """Generate specific instructions for addressing gaps"""
+        """Generate specific instructions for addressing gaps (including natural language diff descriptions)"""
         instructions = []
-        
         for i, gap in enumerate(gaps, 1):
-            if 'structural' in gap.lower():
+            if gap.startswith("CODE DIFF"):
+                continue  # Skip section header
+            is_diff_desc = (
+                ('original' in gap.lower() and ('regenerated' in gap.lower() or 'omits' in gap.lower() or 'differs' in gap.lower()))
+                or 'diff block' in gap.lower()
+            )
+            if is_diff_desc:
+                instructions.append(f"- CRITICAL (code diff): {gap}")
+            elif 'structural' in gap.lower():
                 instructions.append(f"{i}. Provide detailed structural information")
             elif 'semantic' in gap.lower():
                 instructions.append(f"{i}. Include more semantic context")
@@ -755,5 +762,4 @@ class PromptOptimizer:
                 instructions.append(f"{i}. Specify exact variable names")
             else:
                 instructions.append(f"{i}. Address: {gap}")
-        
         return '\n'.join(instructions)

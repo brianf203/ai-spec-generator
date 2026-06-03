@@ -31,6 +31,9 @@ class TestLoader:
             tf = candidate / f"test_{source_name}.py"
             if tf.exists():
                 return str(tf)
+            alt = candidate / "claude_generated" / f"test_{source_name}.py"
+            if alt.exists():
+                return str(alt)
 
         # test_projects structure: test_projects/{size}/test_{name}.py
         for size_dir in ['small', 'medium', 'large']:

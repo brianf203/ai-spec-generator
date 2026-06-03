@@ -285,6 +285,15 @@ class FewShotPromptEnhancer:
             }
         ]
     
+    def _var_names_to_str_list(self, var_names) -> List[str]:
+        """Convert variable_names (list of str or list of dict) to list of strings for join."""
+        if not var_names or not isinstance(var_names, (list, tuple)):
+            return []
+        first = var_names[0] if var_names else None
+        if isinstance(first, dict):
+            return [str(v.get('name', '')) for v in var_names if isinstance(v, dict) and v.get('name')]
+        return [str(v) for v in var_names]
+
     def add_examples_to_prompt(self, prompt: str, specification: Dict[str, Any]) -> str:
         """Add few-shot examples to code generation prompt"""
         examples = self._select_adaptive_examples(specification, self.code_examples, task_type="code")
@@ -293,7 +302,8 @@ class FewShotPromptEnhancer:
         
         for i, example in enumerate(examples[:2], 1):
             examples_section += f"Example {i}:\n"
-            examples_section += f"Specification: {example['specification']['function_name']} with variables: {', '.join(example['specification'].get('variable_names', []))}\n"
+            ex_vars = self._var_names_to_str_list(example['specification'].get('variable_names', []))
+            examples_section += f"Specification: {example['specification']['function_name']} with variables: {', '.join(ex_vars)}\n"
             examples_section += f"Generated Code:\n```python\n{example['example_code']}\n```\n"
             examples_section += f"Key: {example['explanation']}\n\n"
         
@@ -324,7 +334,7 @@ class FewShotPromptEnhancer:
             examples_section += f"Generated Specification (key fields):\n"
             spec = example['example_spec']
             examples_section += f"  - Function: {spec.get('function_name')}\n"
-            examples_section += f"  - Variables: {', '.join(spec.get('variable_names', []))}\n"
+            examples_section += f"  - Variables: {', '.join(self._var_names_to_str_list(spec.get('variable_names', [])))}\n"
             if spec.get('user_stories'):
                 examples_section += f"  - User Stories: {len(spec['user_stories'])} stories with Given/When/Then\n"
             if spec.get('error_handling'):

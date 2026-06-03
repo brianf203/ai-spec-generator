@@ -17,6 +17,15 @@ import textwrap
 from contextlib import ExitStack
 from typing import Dict, List, Any, Optional, Tuple, Set, Iterable
 from collections import defaultdict
+from functools import partial
+
+from utils.claude_prompts import (
+    SYSTEM_SPEC_JSON,
+    SYSTEM_CODE_REGENERATION,
+    SYSTEM_TEST_JSON,
+    SYSTEM_FAILURE_DRIVEN_REFINEMENT,
+    SYSTEM_SLICE_SPEC_JSON,
+)
 import numpy as np
 from coverage import Coverage
 from agents.advanced_analyzer import AdvancedCodeAnalyzer, SemanticSimilarityAnalyzer
@@ -24,6 +33,17 @@ from agents.smart_prompt_engine import SmartPromptEngine
 from agents.program_slicing import ProgramSlicingAnalyzer
 from agents.logical_deletion import LogicalDeletionPass
 from agents.few_shot_prompter import FewShotPromptEnhancer
+from agents.context_bundle import attach_bounded_context_to_functions
+
+
+def _func_id_from_info(func_info: Dict[str, Any]) -> str:
+    """Stable id for a function across pipeline stages (must match CodeAnalyzerNode keys)."""
+    fid = func_info.get("func_id")
+    if fid:
+        return fid
+    fp = func_info.get("file_path", "")
+    qk = func_info.get("qualified_key") or func_info.get("function_name", "")
+    return f"{fp}::{qk}"
 
 
 def _coerce_to_float(value: Any, default: float = 0.0) -> float:
@@ -38,12 +58,140 @@ def _coerce_to_float(value: Any, default: float = 0.0) -> float:
         return default
 
 
+def compute_primary_similarity_metrics(
+    structural_similarity: float,
+    behavioral_test_similarity: float,
+    total_test_cases: int,
+    *,
+    config: Optional[Dict[str, Any]] = None,
+) -> float:
+    """
+    Threshold primary metric: structural-only unless we have enough executed test cases.
+
+    When the harness oracle is trustworthy (near-perfect agreement across many cases), optionally
+    up-weight behavioral correctness so convergence does not require every cosmetic AST cue to
+    match (``trusted_behavioral_oracle_blend``).
+    """
+    cfg = config or {}
+    struct = max(0.0, min(1.0, _coerce_to_float(structural_similarity)))
+    btest = max(0.0, min(1.0, _coerce_to_float(behavioral_test_similarity)))
+    n_tests = max(0, int(total_test_cases or 0))
+    min_needed = max(1, int(cfg.get("min_behavioral_cases", 3)))
+    if n_tests < min_needed:
+        return struct
+
+    baseline = (struct + btest) / 2.0
+    if not cfg.get("trusted_behavioral_oracle_blend", True):
+        return baseline
+
+    trust_floor = float(cfg.get("trusted_behavioral_agreement_floor", 0.999))
+    alpha = max(0.0, min(1.0, float(cfg.get("behavioral_oracle_blend_weight", 0.72))))
+    if btest + 1e-12 < trust_floor:
+        return baseline
+
+    oracle_mix = alpha * btest + (1.0 - alpha) * struct
+    return min(1.0, max(baseline, oracle_mix))
+
+
+REGEN_SPEC_ESSENTIAL_KEYS = frozenset(
+    {
+        "function_name",
+        "signature",
+        "return_type",
+        "english_summary",
+        "detailed_english_description",
+        "variable_names",
+        "control_flow",
+        "error_handling",
+        "detailed_step_by_step_logic",
+        "detailed_variable_usage",
+        "detailed_control_flow",
+        "path_analysis",
+        "slicing_analysis",
+        "logical_deletion",
+        "minimal_elements",
+        "causal_analysis",
+        "causal_insights",
+        "causal_structure",
+        "abstract_invariants",
+        "max_nesting_depth",
+        "user_stories",
+        "success_criteria",
+        "edge_cases",
+        "class_context",
+        "hybrid_code_additions",
+        "hybrid_diff_summary",
+        "structural_implementation_gaps",
+        "bounded_context_bundle",
+        "bounded_context_manifest",
+        "hybrid_use_exact_code",
+        "docstring",
+    }
+)
+
+
+
+
+def build_regeneration_spec_json_blob(
+    specification: Dict[str, Any], config: Dict[str, Any]
+) -> str:
+    """JSON projection of specification for regeneration; shrinks responsibly over budget."""
+    from agents.context_bundle import truncate_utf8
+
+    budget = max(4096, int(config.get("regeneration_spec_json_char_budget", 56_000)))
+    dumped = json.dumps(specification, indent=2, default=str)
+    if len(dumped) <= budget:
+        return dumped
+
+    pruned: Dict[str, Any] = {
+        k: specification[k]
+        for k in REGEN_SPEC_ESSENTIAL_KEYS
+        if k in specification
+    }
+
+    for _round in range(14):
+        out = json.dumps(pruned, indent=2, default=str)
+        if len(out) <= budget:
+            return out
+
+        bcb = pruned.get("bounded_context_bundle")
+        if isinstance(bcb, str) and len(bcb.encode("utf-8", errors="replace")) > 3072:
+            pruned["bounded_context_bundle"] = (
+                truncate_utf8(
+                    bcb,
+                    max(
+                        2048,
+                        int(len(bcb.encode("utf-8", errors="replace")) * 0.62),
+                    ),
+                )
+                + "\n# [... bounded_context_bundle truncated ...]\n"
+            )
+            continue
+
+        if pruned.pop("bounded_context_manifest", None) is not None:
+            continue
+
+        pruned["_budget_note"] = (
+            "Additional non-essential spec fields stripped to fit regeneration prompt budget."
+        )
+        clipped = truncate_utf8(
+            json.dumps(pruned, default=str),
+            budget,
+        )
+        return (
+            clipped
+            + "\n# [... specification blob clipped to regeneration budget ...]\n"
+        )
+
+    return truncate_utf8(json.dumps(pruned, default=str), budget)
+
+
 class BaseNode:
     """Base class for all workflow nodes"""
-    
+
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-    
+
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the node's processing"""
         raise NotImplementedError
@@ -74,12 +222,13 @@ class CodeAnalyzerNode(BaseNode):
                 analyzed_files[file_path] = file_analysis
                 
                 for func_key, func_info in file_analysis.get('functions', {}).items():
-                    # func_key might be "method_name" or "ClassName.method_name" for class methods
-                    # Extract just the function name for func_id
+                    # func_key is "name" or "ClassName.method_name" (unique per file)
                     func_name = func_key.split('.')[-1] if '.' in func_key else func_key
-                    func_id = f"{file_path}::{func_name}"
+                    func_id = f"{file_path}::{func_key}"
                     
                     all_functions[func_id] = {
+                        'func_id': func_id,
+                        'qualified_key': func_key,
                         'file_path': file_path,
                         'function_name': func_name,
                         'source_code': func_info.get('source', ''),  # Use get with default
@@ -100,6 +249,31 @@ class CodeAnalyzerNode(BaseNode):
                 print(f"        WARNING: Error analyzing {file_path}: {e}")
                 continue
         
+        only_qn = self.config.get("only_qualified_names")
+        if only_qn:
+            allow = set(only_qn)
+            before = len(all_functions)
+            all_functions = {
+                fid: info
+                for fid, info in all_functions.items()
+                if info.get("qualified_key") in allow
+            }
+            print(f"    only_qualified_names filter: {before} -> {len(all_functions)} functions")
+            if not all_functions:
+                raise ValueError(
+                    "No functions left after only_qualified_names filter "
+                    "(check names match AST keys like ClassName.method or top-level name)."
+                )
+
+        context['python_files'] = python_files
+        attach_bounded_context_to_functions(
+            project_path=project_path,
+            analyzed_files=analyzed_files,
+            all_functions=all_functions,
+            python_files=python_files,
+            config=self.config,
+        )
+
         context['analyzed_files'] = analyzed_files
         context['all_functions'] = all_functions
         context['total_functions'] = len(all_functions)
@@ -365,8 +539,55 @@ class SpecificationGeneratorNode(BaseNode):
         self.program_slicer = ProgramSlicingAnalyzer()
         self.logical_deletion = LogicalDeletionPass()
         from agents.slice_by_slice_spec_generator import SliceBySliceSpecGenerator
-        self.slice_by_slice_generator = SliceBySliceSpecGenerator(self.call_llm)
-    
+        self.slice_by_slice_generator = SliceBySliceSpecGenerator(
+            partial(call_llm, config=self.config, system=SYSTEM_SLICE_SPEC_JSON)
+        )
+
+    def _bounded_context_prompt_suffix(self, func_info: Dict[str, Any]) -> str:
+        if not self.config.get("enable_context_bundle", True):
+            return ""
+        ctx = (func_info.get("context_bundle_text") or "").strip()
+        if not ctx:
+            return ""
+        return (
+            "\n\nREAD-ONLY BOUNDED DEPENDENCY CONTEXT (deterministic excerpts: same-module callees, "
+            "class envelope, scoped k-hop; infer semantics — summarize in specification fields, "
+            "do not paste this block verbatim into the JSON):\n\n"
+            + ctx
+        )
+
+    def _attach_bounded_context_to_specification(
+        self, specification: Dict[str, Any], func_info: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        if not self.config.get("enable_context_bundle", True):
+            return specification
+        from agents.context_bundle import truncate_utf8
+
+        raw = (func_info.get("context_bundle_raw") or "").strip()
+        if not raw:
+            raw = (func_info.get("context_bundle_text") or "").strip()
+        if not raw:
+            return specification
+
+        reg_cap = int(self.config.get("context_regen_bundle_chars", 24_384))
+        specification["bounded_context_bundle"] = truncate_utf8(raw, reg_cap)
+
+        mf = func_info.get("context_bundle_manifest") or []
+        compact = []
+        for m in mf[:120]:
+            if not isinstance(m, dict):
+                continue
+            compact.append(
+                {
+                    "rule": m.get("rule"),
+                    "key": m.get("key"),
+                    "chars": m.get("chars"),
+                    "sha256_preview": m.get("sha256_preview"),
+                }
+            )
+        specification["bounded_context_manifest"] = compact
+        return specification
+
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Generate specifications for all functions"""
         print("    Generating specifications...")
@@ -485,7 +706,7 @@ class SpecificationGeneratorNode(BaseNode):
             'class_context': class_context
         }
         
-        feedback = context.get('feedback_data', {}).get(f"{func_info['file_path']}::{func_info['function_name']}", None)
+        feedback = context.get('feedback_data', {}).get(_func_id_from_info(func_info), None)
         similarity_gaps = []
         iteration = context.get('current_iteration', 1)
         
@@ -493,7 +714,7 @@ class SpecificationGeneratorNode(BaseNode):
             similarity_gaps = feedback.get('gaps', [])
         
         # Incorporate runtime feedback from previous iterations
-        func_id = f"{func_info['file_path']}::{func_info['function_name']}"
+        func_id = _func_id_from_info(func_info)
         runtime_feedback = context.get('runtime_feedback', {}).get(func_id, [])
         if runtime_feedback:
             failure_summaries = []
@@ -513,10 +734,15 @@ class SpecificationGeneratorNode(BaseNode):
                 similarity_gaps.append(f"Test execution failures: {failure_details}")
         
         # Use advanced decomposition for very complex functions
-        # First try program slicing (more sophisticated)
-        slicing_analysis = self.program_slicer.analyze_with_slicing(source_code)
-        use_slicing = (slicing_analysis.get('complexity_reduction', {}).get('complexity_reduced', False) and
-                      len(slicing_analysis.get('slices', [])) > 0)
+        # First try program slicing (more sophisticated); disable for monolithic / ablation baselines
+        enable_slicing = self.config.get('enable_program_slicing', True)
+        if enable_slicing:
+            slicing_analysis = self.program_slicer.analyze_with_slicing(source_code)
+            use_slicing = (slicing_analysis.get('complexity_reduction', {}).get('complexity_reduced', False) and
+                          len(slicing_analysis.get('slices', [])) > 0)
+        else:
+            slicing_analysis = {}
+            use_slicing = False
         
         # Track if we used slice-by-slice generation
         used_slice_by_slice = False
@@ -544,7 +770,8 @@ class SpecificationGeneratorNode(BaseNode):
                     slicing_analysis,
                     func_info.get('function_name', ''),
                     func_info,
-                    causal_minimal_elements
+                    causal_minimal_elements,
+                    refinement_notes=similarity_gaps or None,
                 )
                 
                 if slice_result['success']:
@@ -629,9 +856,11 @@ class SpecificationGeneratorNode(BaseNode):
                     path_info += f"  Path {i}: {path.get('type', 'unknown')} - Conditions: {', '.join(path.get('conditions', [])[:2])}\n"
                 path_info += "\nGenerate specifications that cover ALL paths. Each user story should map to a specific path."
                 prompt += path_info
-            
+
+            prompt += self._bounded_context_prompt_suffix(func_info)
+
             try:
-                response = self.call_llm(prompt)
+                response = self.call_llm(prompt, system=SYSTEM_SPEC_JSON)
                 specification = self._parse_specification_response(response)
             except Exception as e:
                 return {
@@ -794,7 +1023,11 @@ class SpecificationGeneratorNode(BaseNode):
             # Add class context to specification if applicable
             if is_class_method and class_context:
                 specification['class_context'] = class_context
-            
+
+            specification = self._attach_bounded_context_to_specification(
+                specification, func_info
+            )
+
             # Store decomposition analysis for potential future use
             if use_slicing:
                 specification['slicing_analysis'] = slicing_analysis
@@ -1471,7 +1704,15 @@ class CodeRegenerationNode(BaseNode):
         example_enhancer = ExampleDrivenSpecEnhancer()
         constraint_propagator = ConstraintPropagator()
         example_section = example_enhancer.generate_example_based_prompt_enhancement(specification)
-        
+
+        bctx_guide = ""
+        if specification.get("bounded_context_bundle"):
+            bctx_guide = (
+                "\n\nBOUNDED CONTEXT (read-only):\n"
+                "The Specification JSON includes `bounded_context_bundle` excerpts from sibling callees and scoped definitions. "
+                "Use them to infer behaviour — do NOT paste that text verbatim; synthesize equivalent logic in your answer.\n"
+            )
+
         # Extract and propagate constraints (original_code passed separately, not in spec)
         constraints = constraint_propagator.extract_constraints(specification, original_code or '')
         constraint_section = constraint_propagator.generate_constraint_prompt_section(constraints) if constraints else ""
@@ -1600,24 +1841,35 @@ class CodeRegenerationNode(BaseNode):
                     for assertion in logical_plan['slice_assertions'][:5]:
                         logical_deletion_section += f"  - {assertion.get('assertion_id', '')}: When {assertion.get('precondition', '')} expect {assertion.get('expected_effect', '')}\n"
             
-            # Specification should NEVER contain original code - it's stored separately in context
-            spec_json = json.dumps(specification, indent=2)
-            
-            if len(spec_json) > 10000:  # Limit spec JSON to 10k chars
-                # Keep only essential fields
-                essential_fields = ['function_name', 'signature', 'return_type', 'english_summary', 
-                                  'variable_names', 'control_flow', 'error_handling', 'detailed_step_by_step_logic',
-                                  'detailed_variable_usage', 'detailed_control_flow', 'hybrid_code_additions']
-                spec_for_prompt = {k: v for k, v in specification.items() if k in essential_fields}
-                spec_json = json.dumps(spec_for_prompt, indent=2)
+            # Specification JSON for regen respects ``regeneration_spec_json_char_budget`` and richer keys.
+            spec_json = build_regeneration_spec_json_blob(specification, self.config)
+
+            hybrid_guidance_section = ""
+            if specification.get('hybrid_code_additions') and not specification.get('hybrid_use_exact_code'):
+                hybrid_guidance_section = (
+                    "\n\nMINIMAL REFERENCE SNIPPETS (hybrid_code_additions):\n"
+                    "These lines are constraints from the reference implementation, not a full solution.\n"
+                    "Synthesize a complete function body that satisfies EVERY snippet (same branches, messages, calls).\n"
+                    "Do not paste them as dead code—integrate equivalent logic so AST structure matches.\n"
+                )
+            if specification.get('hybrid_diff_summary'):
+                hybrid_guidance_section += "\n\nCRITICAL DIFFERENCES TO FIX:\n" + "\n".join(
+                    f"  - {d}" for d in specification['hybrid_diff_summary'][:12]
+                )
+            gaps_cm = specification.get('structural_implementation_gaps') or []
+            if gaps_cm:
+                hybrid_guidance_section += "\n\nSTRUCTURAL IMPLEMENTATION GAPS (failure-driven — satisfy all):\n" + "\n".join(
+                    f"  - {g}" for g in gaps_cm[:15]
+                )
             
             prompt = f"""
 Generate ONLY the method code (not the entire class) based on this specification.
 
 Specification:
     {spec_json}
+{bctx_guide}
 {original_method_ref}
-{path_guidance}{variable_names_section}{control_flow_section}{example_section}{constraint_section}{causal_analysis_section}{slicing_guidance_section}{logical_deletion_section}
+{path_guidance}{variable_names_section}{control_flow_section}{example_section}{constraint_section}{causal_analysis_section}{slicing_guidance_section}{logical_deletion_section}{hybrid_guidance_section}
 CRITICAL REQUIREMENTS FOR CLASS METHOD (MUST FOLLOW EXACTLY):
     - Generate ONLY the method definition: def {method_name}(self, ...):
         - Do NOT include class definition, imports, or any other code
@@ -1743,16 +1995,26 @@ Generate ONLY the method code, nothing else. No explanations, no markdown format
                         )
                 logical_deletion_section += logical_plan.get('summary', '')
             
-            # Specification should NEVER contain original code - it's stored separately in context
-            spec_json = json.dumps(specification, indent=2)
-            
-            if len(spec_json) > 10000:  # Limit spec JSON to 10k chars
-                # Keep only essential fields
-                essential_fields = ['function_name', 'signature', 'return_type', 'english_summary', 
-                                  'variable_names', 'control_flow', 'error_handling', 'detailed_step_by_step_logic',
-                                  'detailed_variable_usage', 'detailed_control_flow', 'hybrid_code_additions']
-                spec_for_prompt = {k: v for k, v in specification.items() if k in essential_fields}
-                spec_json = json.dumps(spec_for_prompt, indent=2)
+            # Specification JSON for regen respects ``regeneration_spec_json_char_budget`` and richer keys.
+            spec_json = build_regeneration_spec_json_blob(specification, self.config)
+
+            hybrid_guidance_section = ""
+            if specification.get('hybrid_code_additions') and not specification.get('hybrid_use_exact_code'):
+                hybrid_guidance_section = (
+                    "\n\nMINIMAL REFERENCE SNIPPETS (hybrid_code_additions):\n"
+                    "These lines are constraints from the reference implementation, not a full solution.\n"
+                    "Synthesize a complete function body that satisfies EVERY snippet (same branches, messages, calls).\n"
+                    "Do not paste them as dead code—integrate equivalent logic so AST structure matches.\n"
+                )
+            if specification.get('hybrid_diff_summary'):
+                hybrid_guidance_section += "\n\nCRITICAL DIFFERENCES TO FIX (regenerated must address):\n"
+                for d in specification['hybrid_diff_summary'][:12]:
+                    hybrid_guidance_section += f"  - {d}\n"
+            gaps_nc = specification.get('structural_implementation_gaps') or []
+            if gaps_nc:
+                hybrid_guidance_section += "\n\nSTRUCTURAL IMPLEMENTATION GAPS (failure-driven — satisfy all):\n" + "\n".join(
+                    f"  - {g}" for g in gaps_nc[:15]
+                )
             
             # Add docstring section if specification has one (for non-class methods)
             docstring_section = ""
@@ -1768,8 +2030,9 @@ Generate Python code based on the following detailed specification. The code sho
 
 Specification:
     {spec_json}
+{bctx_guide}
 {enhanced_description_section}{step_by_step_section}{detailed_control_flow_section}{detailed_variable_section}{path_guidance}{variable_names_section}{control_flow_section}{example_section}{constraint_section}{causal_analysis_section}
-{slicing_guidance_section}{logical_deletion_section}{docstring_section}
+{slicing_guidance_section}{logical_deletion_section}{hybrid_guidance_section}{docstring_section}
 CRITICAL REQUIREMENTS (MUST FOLLOW EXACTLY - THESE DETERMINE SIMILARITY SCORES):
 
 VARIABLE NAMES (MOST CRITICAL):
@@ -1841,7 +2104,7 @@ The code should be complete, runnable, and syntactically valid.
         for attempt in range(max_retries):
             try:
                 # Check prompt length - if too long, use simplified prompt immediately
-                if len(prompt) > 25000:  # Gemini has token limits (~30k tokens, but be conservative)
+                if len(prompt) > 25000:  # Very long prompts: simplify to stay within context and latency budget
                     print(f"        WARNING: Prompt too long ({len(prompt)} chars), using simplified prompt...")
                     if attempt == 0:
                         # First attempt with long prompt failed, use simplified immediately
@@ -1865,7 +2128,7 @@ The code should be complete, runnable, and syntactically valid.
                         spec_copy['detailed_step_by_step_logic'] = str(spec_copy['detailed_step_by_step_logic'])[:2000]
                     prompt = prompt.replace(json.dumps(specification, indent=2), json.dumps(spec_copy, indent=2))
                 
-                response = self.call_llm(prompt)
+                response = self.call_llm(prompt, system=SYSTEM_CODE_REGENERATION)
                 
                 # Check if response is empty or None
                 if not response or not response.strip():
@@ -1884,7 +2147,7 @@ The code should be complete, runnable, and syntactically valid.
                         print(f"        Trying ultra-simple prompt (len={len(prompt)})...")
                         import time
                         time.sleep(2)
-                        response = self.call_llm(prompt)
+                        response = self.call_llm(prompt, system=SYSTEM_CODE_REGENERATION)
                         if response and response.strip():
                             code = self._clean_generated_code(response)
                             if code and len(code.strip()) >= 10:
@@ -2142,61 +2405,169 @@ class TestGenerationNode(BaseNode):
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
         from utils.test_loader import TestLoader
+        from utils.call_llm import call_llm
+
         self.test_loader = TestLoader()
+        # Used by _generate_tests when LLM-generated tests are enabled; system prompt enforces JSON harness shape.
+        self.call_llm = partial(call_llm, config=self.config, system=SYSTEM_TEST_JSON)
+        self.few_shot_enhancer = FewShotPromptEnhancer()
     
-    def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Load tests for all functions from user-provided test files"""
-        print("    Loading user-provided tests for behavioral validation...")
-        
-        specifications = context.get('specifications', {})
-        generated_tests = context.get('generated_tests', {})
-        project_path = context.get('project_path', '')
-        
-        for func_id, spec_data in specifications.items():
-            if not spec_data.get('success', False):
+    def _merge_and_deduplicate_cases(
+        self, cases: List[Dict[str, Any]], max_keep: int
+    ) -> List[Dict[str, Any]]:
+        seen: Set[str] = set()
+        out: List[Dict[str, Any]] = []
+        for t in cases:
+            if not isinstance(t, dict):
                 continue
-            
-            if func_id in generated_tests:
-                continue
-            
-            print(f"      Loading tests for {spec_data['function_name']}...")
-            
             try:
-                # Load tests from test file
-                file_path = spec_data.get('file_path', '')
-                function_name = spec_data['function_name']
-                
-                tests = self.test_loader.load_tests_for_function(
-                    file_path,
-                    function_name,
-                    project_path
+                sig = (
+                    str(t.get("test_name"))
+                    + "|"
+                    + json.dumps(t.get("inputs") or {}, sort_keys=True, default=str)
                 )
-                
-                if tests:
-                    generated_tests[func_id] = {
-                        'tests': tests,
-                        'function_name': function_name,
-                        'file_path': file_path
-                    }
-                    print(f"        Loaded {len(tests)} tests from test file")
-                else:
-                    print(f"        WARNING: No tests found for {function_name}")
-                    # Create empty test list so execution can proceed
-                    generated_tests[func_id] = {
-                        'tests': [],
-                        'function_name': function_name,
-                        'file_path': file_path
-                    }
-            
-            except Exception as e:
-                print(f"        ERROR: {e}")
-                import traceback
-                traceback.print_exc()
+            except (TypeError, ValueError):
+                sig = str(t)
+            if sig in seen:
                 continue
-        
-        context['generated_tests'] = generated_tests
-        print(f"    Loaded tests for {len(generated_tests)} functions")
-        
+            seen.add(sig)
+            out.append(t)
+            if len(out) >= max_keep:
+                break
+        return out
+
+    def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Load repo tests where present; synthesize behavioral harness tests when needed."""
+        print("    Loading / synthesizing behavioral tests...")
+
+        specifications = context.get("specifications", {})
+        generated_tests = context.setdefault("generated_tests", {})
+        project_path = context.get("project_path", "")
+
+        llm_fallback = bool(self.config.get("enable_llm_generated_tests", True))
+        llm_topup = bool(self.config.get("llm_generated_tests_when_insufficient", True))
+        min_cases = max(1, int(self.config.get("min_behavioral_cases", 3)))
+        max_llm_rounds = max(1, int(self.config.get("max_llm_test_generation_rounds_per_func", 2)))
+        max_keep = max(min_cases + 6, int(self.config.get("max_generated_tests_cap", 28)))
+        harness_mode_cfg = str(self.config.get("harness_mode", "auto")).lower()
+
+        for func_id, spec_data in specifications.items():
+            if not spec_data.get("success", False):
+                continue
+
+            file_path = spec_data.get("file_path", "")
+            function_name = spec_data["function_name"]
+            prev = generated_tests.get(func_id)
+            prev_tests: List[Any] = (prev.get("tests") if isinstance(prev, dict) else None) or []
+            llm_rounds = (
+                int(prev.get("llm_generation_rounds", 0))
+                if isinstance(prev, dict)
+                else 0
+            )
+
+            print(f"      Tests for {function_name}...")
+            unittest_cases = []
+            try:
+                unittest_cases = self.test_loader.load_tests_for_function(
+                    file_path, function_name, project_path
+                )
+            except Exception as e:
+                print(f"        WARNING: loader error: {e}")
+
+            pytest_paths: List[str] = []
+            if harness_mode_cfg in ("auto", "pytest"):
+                try:
+                    from utils.pytest_harness import discover_pytest_paths
+
+                    pytest_paths = discover_pytest_paths(file_path, project_path)
+                except Exception as e:
+                    print(f"        WARNING: pytest discovery error: {e}")
+
+            merged: List[Dict[str, Any]] = []
+            if unittest_cases:
+                merged = [u for u in unittest_cases if isinstance(u, dict)]
+            elif isinstance(prev_tests, list) and isinstance(prev, dict) and prev.get("harness_mode") != "pytest":
+                merged = [t for t in prev_tests if isinstance(t, dict)]
+
+            qualified_key = (
+                func_id.split("::", 1)[1] if "::" in func_id else function_name
+            )
+            use_pytest = False
+            if harness_mode_cfg == "pytest":
+                use_pytest = bool(pytest_paths)
+            elif harness_mode_cfg == "auto":
+                use_pytest = len(merged) == 0 and bool(pytest_paths)
+
+            tr = context.get("test_results", {}).get(func_id)
+            feedback = (
+                None
+                if not tr
+                else {
+                    "missing_branches": tr.get("missing_branches") or [],
+                    "missing_lines": tr.get("missing_lines") or [],
+                    "branch_coverage": tr.get("branch_coverage", 0.0),
+                    "metrics": {"branch_coverage": tr.get("branch_coverage", 0.0)},
+                }
+            )
+
+            orig = context.get("original_code", {}).get(func_id, "") or ""
+            need_llm = (
+                not use_pytest
+                and llm_fallback
+                and orig.strip()
+                and llm_rounds < max_llm_rounds
+                and (len(merged) == 0 or (llm_topup and len(merged) < min_cases))
+            )
+            if need_llm:
+                spec = spec_data.get("specification") or {}
+                gen = self._generate_tests(orig, spec, function_name, feedback=feedback)
+                if gen:
+                    llm_rounds += 1
+                for t in gen:
+                    if isinstance(t, dict):
+                        merged.append(t)
+
+            merged = self._merge_and_deduplicate_cases(merged, max_keep)
+
+            ulen = len([u for u in (unittest_cases or []) if isinstance(u, dict)])
+
+            if use_pytest:
+                generated_tests[func_id] = {
+                    "tests": [],
+                    "harness_mode": "pytest",
+                    "pytest_paths": pytest_paths,
+                    "qualified_key": qualified_key,
+                    "function_name": function_name,
+                    "file_path": file_path,
+                    "llm_generation_rounds": llm_rounds,
+                    "test_sources": {
+                        "from_unittest_loader": ulen,
+                        "from_pytest_harness": len(pytest_paths),
+                        "total_cases": 0,
+                    },
+                }
+                print(
+                    f"        pytest harness: {len(pytest_paths)} module(s) "
+                    f"(loader cases={ulen}, mode={harness_mode_cfg})"
+                )
+            else:
+                generated_tests[func_id] = {
+                    "tests": merged,
+                    "function_name": function_name,
+                    "file_path": file_path,
+                    "llm_generation_rounds": llm_rounds,
+                    "test_sources": {
+                        "from_unittest_loader": ulen,
+                        "total_cases": len(merged),
+                    },
+                }
+
+                if ulen > 0:
+                    print(f"        {len(merged)} case(s): {ulen} from repo tests (+ LLM synthesized as needed)")
+                else:
+                    print(f"        {len(merged)} harness case(s) (LLM + carried forward)")
+
+        print(f"    Prepared behavioral tests for {len(generated_tests)} function(s)")
         return context
     
     def _generate_tests(
@@ -2204,7 +2575,7 @@ class TestGenerationNode(BaseNode):
         original_code: str,
         specification: Dict[str, Any],
         function_name: str,
-        feedback: Optional[Dict[str, Any]] = None
+        feedback: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         """Generate tests for a function, using path analysis if available"""
         
@@ -2401,6 +2772,20 @@ class TestGenerationNode(BaseNode):
                 f"Documented persistent attributes: {attributes_text}. "
                 "The harness instantiates this class and binds the method before execution, so do NOT include `self` in the `inputs` payload."
             )
+
+        bounded_section = ""
+        bcb = specification.get("bounded_context_bundle") or ""
+        if isinstance(bcb, str) and bcb.strip():
+            from agents.context_bundle import truncate_utf8
+
+            cap = int(self.config.get("context_test_prompt_bundle_bytes", 12_288))
+            clip = truncate_utf8(bcb.strip(), cap)
+            bounded_section = (
+                "\n### Bounded dependency context (read-only excerpts; use for realism only)\n"
+                "```text\n"
+                + clip
+                + "\n```\n"
+            )
         
         def _format_user_story(story: Dict[str, Any]) -> str:
             if not isinstance(story, dict):
@@ -2556,6 +2941,7 @@ Generate comprehensive unit tests for the following Python callable. Use the con
 
 ### Class or stateful context
 {class_context_section}
+{bounded_section}
 
 ### User stories and acceptance scenarios
 {user_story_section}
@@ -2886,9 +3272,9 @@ class TestExecutionNode(BaseNode):
             if func_id not in regenerated_code or func_id not in generated_tests:
                 continue
             
-            if func_id in test_results:
-                continue
-            
+            # Re-run tests whenever execution is invoked — regenerated code changes across
+            # iterations, failure-driven refinement, and hybrid loops. Skipping stale
+            # results left behavioral_test_similarity frozen at empty / zero forever.
             print(f"      Testing {specifications[func_id]['function_name']}...")
             
             try:
@@ -2898,16 +3284,27 @@ class TestExecutionNode(BaseNode):
                     # Fallback: try to get from func_info if available
                     func_info = context.get('function_info', {}).get(func_id, {})
                     original_code = func_info.get('source_code', '')
-                
-                results = self._execute_tests(
-                    original_code,
-                    regenerated_code[func_id]['code'],
-                    generated_tests[func_id]['tests'],
-                    specifications[func_id]['function_name'],
-                    specifications[func_id].get('imports', []),
-                    specifications[func_id]['specification'],
-                    specifications[func_id]['file_path']
-                )
+
+                gen_entry = generated_tests[func_id]
+                if gen_entry.get("harness_mode") == "pytest":
+                    results = self._execute_pytest_harness(
+                        context,
+                        func_id,
+                        specifications[func_id],
+                        original_code,
+                        regenerated_code[func_id]["code"],
+                        gen_entry,
+                    )
+                else:
+                    results = self._execute_tests(
+                        original_code,
+                        regenerated_code[func_id]['code'],
+                        gen_entry['tests'],
+                        specifications[func_id]['function_name'],
+                        specifications[func_id].get('imports', []),
+                        specifications[func_id]['specification'],
+                        specifications[func_id]['file_path']
+                    )
                 
                 test_results[func_id] = results
                 
@@ -2924,6 +3321,37 @@ class TestExecutionNode(BaseNode):
         print(f"    Executed tests for {len(test_results)} functions")
         
         return context
+
+    def _execute_pytest_harness(
+        self,
+        context: Dict[str, Any],
+        func_id: str,
+        spec_data: Dict[str, Any],
+        original_code: str,
+        regenerated_code: str,
+        gen_entry: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        from utils.pytest_harness import run_pytest_harness_for_function
+
+        project_path = context.get("project_path", "")
+        file_path = spec_data.get("file_path") or gen_entry.get("file_path", "")
+        qualified_key = gen_entry.get("qualified_key") or (
+            func_id.split("::", 1)[1] if "::" in func_id else spec_data.get("function_name", "")
+        )
+        pytest_paths = gen_entry.get("pytest_paths") or []
+        timeout_sec = int(self.config.get("pytest_harness_timeout_sec", 300))
+        cache = context.setdefault("pytest_baseline_cache", {})
+
+        return run_pytest_harness_for_function(
+            project_path=project_path,
+            source_file=file_path,
+            qualified_key=qualified_key,
+            pytest_paths=pytest_paths,
+            original_source=original_code,
+            regenerated_source=regenerated_code,
+            baseline_cache=cache,
+            timeout_sec=timeout_sec,
+        )
     
     def _execute_tests(self, original_code: str, regenerated_code: str, tests: List[Dict[str, Any]], 
                        function_name: str, imports: List[str], specification: Dict[str, Any],
@@ -2942,12 +3370,13 @@ class TestExecutionNode(BaseNode):
             'regenerated_passed': 0,
             'regenerated_failed': 0,
             'failures': [],
-            'behavioral_match': True,
+            'behavioral_match': True,  # Set False below when no tests
             'branch_coverage': 0.0,
             'coverage_complete': False
         }
         
         if not valid_tests:
+            results['behavioral_match'] = False  # No tests = no evidence; default to 0
             return results
         
         # Create temporary files FIRST, before starting coverage
@@ -4042,18 +4471,22 @@ class SimilarityAnalyzerNode(BaseNode):
                 structural_similarity = _coerce_to_float(similarity_metrics.get('structural_similarity', 0.0))
                 behavioral_similarity = _coerce_to_float(similarity_metrics.get('behavioral_similarity', 0.0))
                 behavioral_test_similarity = _coerce_to_float(
-                    similarity_metrics.get('behavioral_test_similarity', 0.0)
+                    similarity_metrics.get("behavioral_test_similarity", 0.0)
                 )
-                
-                # Primary similarity for threshold: 100% AST + 100% behavioral (tests), ignore textual
-                # Threshold pass requires both structural and behavioral_test to be 100%
-                has_tests = func_id in test_results and test_results[func_id].get('total_tests', 0) > 0
-                if has_tests:
-                    primary_similarity = (structural_similarity + behavioral_test_similarity) / 2.0
-                else:
-                    primary_similarity = structural_similarity
-                similarity_metrics['primary_similarity'] = primary_similarity
-                similarity_metrics['textual_similarity'] = textual_similarity
+
+                tt = (
+                    int(test_results[func_id].get("total_tests", 0))
+                    if func_id in test_results
+                    else 0
+                )
+                primary_similarity = compute_primary_similarity_metrics(
+                    structural_similarity,
+                    behavioral_test_similarity,
+                    tt,
+                    config=self.config,
+                )
+                similarity_metrics["primary_similarity"] = primary_similarity
+                similarity_metrics["textual_similarity"] = textual_similarity
                 similarity_metrics['structural_similarity'] = structural_similarity
                 similarity_metrics['behavioral_similarity'] = behavioral_similarity
                 similarity_metrics['behavioral_test_similarity'] = behavioral_test_similarity
@@ -4146,7 +4579,7 @@ class FailureDrivenSpecRefinementNode(BaseNode):
         super().__init__(config)
         from utils.call_llm import call_llm
         from agents.failure_driven_refinement import FailureDrivenRefinementEngine
-        self.call_llm = lambda p: call_llm(p, config=self.config)
+        self.call_llm = partial(call_llm, config=self.config, system=SYSTEM_FAILURE_DRIVEN_REFINEMENT)
         self.refinement_engine = FailureDrivenRefinementEngine(self.call_llm)
         self.semantic_analyzer = SemanticSimilarityAnalyzer()
         self.max_attempts = config.get('failure_driven_max_attempts', 3)
@@ -4222,16 +4655,23 @@ class FailureDrivenSpecRefinementNode(BaseNode):
                     new_metrics = self.semantic_analyzer.calculate_semantic_similarity(
                         original_code, new_regen
                     )
-                    test_data = context.get('test_results', {}).get(func_id, {})
-                    if test_data:
-                        behav_sim = self._calc_behavioral_test_sim(test_data)
-                        new_metrics['behavioral_test_similarity'] = behav_sim
-                    else:
-                        new_metrics['behavioral_test_similarity'] = 0.0
+                    test_data = context.get('test_results', {}).get(func_id, {}) or {}
+                    behav_sim = self._calc_behavioral_test_sim(test_data) if test_data else 0.0
+                    new_metrics['behavioral_test_similarity'] = behav_sim
                     struct = new_metrics.get('structural_similarity', 0.0)
-                    behav = new_metrics.get('behavioral_test_similarity',
-                                           new_metrics.get('behavioral_similarity', 0.0))
-                    new_primary = (struct + behav) / 2.0 if behav > 0 else struct
+                    tt = (
+                        test_data.get("total_tests", 0)
+                        or (
+                            test_data.get("original_passed", 0)
+                            + test_data.get("original_failed", 0)
+                        )
+                    )
+                    new_primary = compute_primary_similarity_metrics(
+                        struct,
+                        behav_sim,
+                        int(tt),
+                        config=self.config,
+                    )
                     similarity_results[func_id]['similarity_metrics'] = new_metrics
                     similarity_results[func_id]['similarity_metrics']['primary_similarity'] = new_primary
                     regen_code = new_regen
@@ -4273,231 +4713,334 @@ class FailureDrivenSpecRefinementNode(BaseNode):
         return matches / total
 
 
+class _HybridPiece:
+    """Wrapper for hybrid code pieces (diff-driven or tier-based) with unified .code and .tier interface."""
+    def __init__(self, code: str, tier: str = 'diff_driven', description: str = ''):
+        self.code = code
+        self.tier = tier
+        self.description = description
+
+
 class HybridSpecsNode(BaseNode):
     """
-    Automatically adds code pieces incrementally until reaching 100% similarity.
-    Uses smart extraction: prioritizes by constraint strength (docstrings, string literals,
-    control flow, return expressions) so minimal code achieves maximum similarity gain.
+    Diagnostic incremental hybrid (v2): rank gap-derived snippets, regen, backtrack on
+    low marginal gain, escalate minimal lines to full statement blocks when needed.
     """
-    
+
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
         from utils.code_diff_analyzer import CodeDiffAnalyzer
+        from utils.hybrid_gap_planner import HybridGapPlanner
         from utils.smart_code_extractor import SmartCodeExtractor
-        self.diff_analyzer = CodeDiffAnalyzer()
+
+        self.diff_analyzer = CodeDiffAnalyzer
+        self.gap_planner = HybridGapPlanner()
         self.smart_extractor = SmartCodeExtractor()
-        self.max_iterations = config.get('hybrid_max_iterations', 12)
-        self.similarity_threshold = config.get('hybrid_similarity_threshold', 0.999)
-    
+        self.max_iterations = config.get("hybrid_max_iterations", 12)
+        self.similarity_threshold = config.get("hybrid_similarity_threshold", 0.999)
+        self.min_improvement = float(config.get("hybrid_min_improvement_per_step", 0.015))
+        self.max_regens_per_func = int(config.get("hybrid_max_regens_per_func", 5))
+        self.allow_full_fallback = bool(config.get("hybrid_allow_full_code_fallback", False))
+
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Automatically add code pieces incrementally until reaching target similarity.
-        This is less efficient than manual addition but fully automated.
-        """
-        print("    Running automatic hybrid specs generation...")
-        
-        specifications = context.get('specifications', {})
-        regenerated_code = context.get('regenerated_code', {})
-        similarity_results = context.get('similarity_results', {})
-        original_code_dict = context.get('original_code', {})
-        
-        hybrid_specs = context.get('hybrid_specs', {})
-        
+        print("    Running diagnostic hybrid specs generation...")
+
+        specifications = context.get("specifications", {})
+        regenerated_code = context.get("regenerated_code", {})
+        similarity_results = context.get("similarity_results", {})
+        original_code_dict = context.get("original_code", {})
+        hybrid_specs = context.get("hybrid_specs", {})
+
         for func_id, spec_data in specifications.items():
-            if not spec_data.get('success', False):
+            if not spec_data.get("success", False):
                 continue
-            
             if func_id not in similarity_results:
                 continue
-            
-            similarity_metrics = similarity_results[func_id].get('similarity_metrics', {})
-            primary_similarity = similarity_metrics.get('primary_similarity', 0.0)
-            
-            # Only process if similarity is less than threshold
+
+            metrics = similarity_results[func_id].get("similarity_metrics", {})
+            primary_similarity = float(metrics.get("primary_similarity", 0.0))
             if primary_similarity >= self.similarity_threshold:
                 continue
-            
-            original_code = original_code_dict.get(func_id, '')
-            regen_code = regenerated_code.get(func_id, {}).get('code', '')
-            
+
+            original_code = original_code_dict.get(func_id, "")
+            regen_code = regenerated_code.get(func_id, {}).get("code", "")
             if not original_code or not regen_code:
                 continue
-            
-            print(f"      Processing hybrid specs for {spec_data['function_name']} "
-                  f"(current similarity: {primary_similarity:.1%})...")
-            
-            # Smart extraction: get prioritized pieces (docstring, strings, control flow, returns, etc.)
-            already_added = []
-            added_pieces = []
-            iteration = 0
-            current_similarity = primary_similarity
-            
-            while (current_similarity < self.similarity_threshold and 
-                   iteration < self.max_iterations):
-                iteration += 1
-                
-                # Get next pieces from smart extractor (diff-aware: prefers missing-in-regen)
-                next_pieces = self.smart_extractor.get_next_pieces(
-                    original_code,
-                    already_added,
-                    regen_code,
-                    max_pieces_per_iter=2
-                )
-                
-                if not next_pieces:
-                    # Exhausted all smart pieces - last resort only if still below threshold
-                    if current_similarity < self.similarity_threshold:
-                        spec = spec_data['specification']
-                        if 'hybrid_code_additions' not in spec:
-                            spec['hybrid_code_additions'] = []
-                        spec['hybrid_code_additions'] = [original_code]
-                        spec['hybrid_use_exact_code'] = True
-                        added_pieces.append({
-                            'code': original_code,
-                            'iteration': iteration,
-                            'method': 'last_resort_full_code'
-                        })
-                        print(f"        Last resort: Exhausted smart pieces, adding full code")
-                        # Run one final regeneration with exact code
-                        try:
-                            from nodes import CodeRegenerationNode
-                            regen_node = CodeRegenerationNode(self.config)
-                            if func_id in context.get('regenerated_code', {}):
-                                del context['regenerated_code'][func_id]
-                            context = regen_node.execute(context)
-                            if func_id in context.get('regenerated_code', {}):
-                                new_regen = context['regenerated_code'][func_id].get('code', '')
-                                if new_regen:
-                                    regen_code = new_regen
-                                    from nodes import TestGenerationNode, TestExecutionNode
-                                    test_gen = TestGenerationNode(self.config)
-                                    test_exec = TestExecutionNode(self.config)
-                                    context = test_gen.execute(context)
-                                    context = test_exec.execute(context)
-                                    from agents.advanced_analyzer import SemanticSimilarityAnalyzer
-                                    analyzer = SemanticSimilarityAnalyzer()
-                                    new_metrics = analyzer.calculate_semantic_similarity(original_code, new_regen)
-                                    test_data = context.get('test_results', {}).get(func_id, {})
-                                    behav_sim = self._hybrid_behavioral_test_sim(test_data) if test_data else 0.0
-                                    new_metrics['behavioral_test_similarity'] = behav_sim
-                                    struct = new_metrics.get('structural_similarity', 0.0)
-                                    behav = new_metrics.get('behavioral_test_similarity', 0.0)
-                                    current_similarity = (struct + behav) / 2.0 if behav > 0 else struct
-                                    similarity_results[func_id]['similarity_metrics'] = new_metrics
-                                    similarity_results[func_id]['similarity_metrics']['primary_similarity'] = current_similarity
-                        except Exception as e:
-                            print(f"        WARNING: Last resort regeneration failed: {e}")
-                    break
-                
-                # Add 1-2 pieces per iteration
-                for piece in next_pieces:
-                    already_added.append(piece.code)
-                    added_pieces.append({
-                        'code': piece.code,
-                        'iteration': iteration,
-                        'method': f'smart_{piece.tier}',
-                        'tier': piece.tier
-                    })
-                
-                spec = spec_data['specification']
-                if 'hybrid_code_additions' not in spec:
-                    spec['hybrid_code_additions'] = []
-                if not spec.get('hybrid_use_exact_code'):
-                    for piece in next_pieces:
-                        spec['hybrid_code_additions'].append(piece.code)
-                
-                tiers_str = ', '.join(p.tier for p in next_pieces)
-                print(f"        Iteration {iteration}: Adding {tiers_str} ({len(next_pieces)} pieces)")
-                
-                # Regenerate code with updated spec
-                if added_pieces:
-                    print(f"        Iteration {iteration}: Added code piece, regenerating...")
-                    # Trigger code regeneration with updated spec
-                    try:
-                        from nodes import CodeRegenerationNode
-                        regen_node = CodeRegenerationNode(self.config)
-                        
-                        # Force regeneration by clearing existing regenerated code
-                        if func_id in context.get('regenerated_code', {}):
-                            del context['regenerated_code'][func_id]
-                        
-                        # Regenerate with updated spec
-                        context = regen_node.execute(context)
-                        
-                        # Recalculate similarity: run tests and use (AST + behavioral_test) / 2
-                        if func_id in context.get('regenerated_code', {}):
-                            new_regen = context['regenerated_code'][func_id].get('code', '')
-                            if new_regen:
-                                regen_code = new_regen
-                                from nodes import TestGenerationNode, TestExecutionNode
-                                test_gen = TestGenerationNode(self.config)
-                                test_exec = TestExecutionNode(self.config)
-                                context = test_gen.execute(context)
-                                context = test_exec.execute(context)
-                                from agents.advanced_analyzer import SemanticSimilarityAnalyzer
-                                analyzer = SemanticSimilarityAnalyzer()
-                                new_metrics = analyzer.calculate_semantic_similarity(original_code, new_regen)
-                                test_data = context.get('test_results', {}).get(func_id, {})
-                                if test_data:
-                                    behav_sim = self._hybrid_behavioral_test_sim(test_data)
-                                    new_metrics['behavioral_test_similarity'] = behav_sim
-                                else:
-                                    new_metrics['behavioral_test_similarity'] = 0.0
-                                struct = new_metrics.get('structural_similarity', 0.0)
-                                behav = new_metrics.get('behavioral_test_similarity', 0.0)
-                                current_similarity = (struct + behav) / 2.0 if behav > 0 else struct
-                                similarity_results[func_id]['similarity_metrics'] = new_metrics
-                                similarity_results[func_id]['similarity_metrics']['primary_similarity'] = current_similarity
-                    except Exception as e:
-                        print(f"        WARNING: Failed to regenerate in hybrid specs: {e}")
-                        raise
-                else:
-                    # No code piece could be added - break to avoid infinite loop
-                    break
-            
-            hybrid_specs[func_id] = {
-                'function_name': spec_data['function_name'],
-                'initial_similarity': primary_similarity,
-                'final_similarity': current_similarity,
-                'iterations': iteration,
-                'added_pieces': added_pieces,
-                'pieces_count': len(added_pieces)
-            }
-            
-            print(f"        Completed: {len(added_pieces)} pieces added over {iteration} iterations")
-            print(f"        Final similarity: {current_similarity:.1%}")
-        
-        context['hybrid_specs'] = hybrid_specs
-        context['similarity_results'] = similarity_results
+
+            print(
+                f"      Processing hybrid specs for {spec_data['function_name']} "
+                f"(current similarity: {primary_similarity:.1%})..."
+            )
+
+            context, hybrid_entry = self._process_function_diagnostic_hybrid(
+                context,
+                func_id,
+                spec_data,
+                original_code,
+                regen_code,
+                primary_similarity,
+                similarity_results,
+            )
+            hybrid_specs[func_id] = hybrid_entry
+
+        context["hybrid_specs"] = hybrid_specs
+        context["similarity_results"] = similarity_results
         print(f"    Processed {len(hybrid_specs)} functions for hybrid specs")
-        
         return context
 
+    def _process_function_diagnostic_hybrid(
+        self,
+        context: Dict[str, Any],
+        func_id: str,
+        spec_data: Dict[str, Any],
+        original_code: str,
+        regen_code: str,
+        initial_similarity: float,
+        similarity_results: Dict[str, Any],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        spec = spec_data["specification"]
+        current_similarity = initial_similarity
+        added_pieces: List[Dict[str, Any]] = []
+        rejected_ids: Set[str] = set()
+        escalate_keys: Set[str] = set()
+        regen_count = 0
+
+        # NLP-first: diff descriptions only, no code graft
+        plan = self.gap_planner.plan(original_code, regen_code)
+        if plan.gap_summary:
+            spec["hybrid_diff_summary"] = plan.gap_summary
+            context, new_sim, new_regen, _ = self._hybrid_regen_and_score(
+                context, func_id, original_code, persist=True
+            )
+            regen_count += 1
+            if new_regen:
+                regen_code = new_regen
+            if new_sim >= self.similarity_threshold:
+                print(f"        NLP-first succeeded: {new_sim:.1%} (0% code added)")
+                similarity_results[func_id]["similarity_metrics"]["primary_similarity"] = new_sim
+                return context, {
+                    "function_name": spec_data["function_name"],
+                    "initial_similarity": initial_similarity,
+                    "final_similarity": new_sim,
+                    "iterations": 0,
+                    "regen_calls": regen_count,
+                    "added_pieces": [],
+                    "pieces_count": 0,
+                    "method": "nlp_only",
+                }
+            if new_sim > current_similarity:
+                current_similarity = new_sim
+
+        already_added: List[str] = list(spec.get("hybrid_code_additions") or [])
+        consecutive_failures = 0
+        last_good_regen = regen_code
+
+        while (
+            current_similarity < self.similarity_threshold
+            and regen_count < self.max_regens_per_func
+            and consecutive_failures < 4
+        ):
+            test_data = context.get("test_results", {}).get(func_id, {})
+            plan = self.gap_planner.plan(
+                original_code,
+                regen_code,
+                already_added=already_added,
+                rejected_ids=rejected_ids,
+                escalate_stmt_keys=escalate_keys,
+                test_data=test_data,
+            )
+            if not plan.candidates:
+                break
+
+            cand = plan.candidates[0]
+            sim_before = current_similarity
+            HybridGapPlanner.append_addition(spec, cand.code)
+            already_added.append(cand.code)
+
+            print(
+                f"        Hybrid step {regen_count + 1}: +[{cand.category}] "
+                f"score={cand.score:.0f} — {cand.description[:55]}"
+            )
+
+            context, new_sim, new_regen, new_metrics = self._hybrid_regen_and_score(
+                context, func_id, original_code, persist=False
+            )
+            regen_count += 1
+            delta = new_sim - sim_before
+
+            piece_record = {
+                "code": cand.code,
+                "iteration": regen_count,
+                "method": f"diagnostic_{cand.source}",
+                "category": cand.category,
+                "candidate_id": cand.candidate_id,
+                "score": cand.score,
+                "delta_similarity": delta,
+                "escalation_level": cand.escalation_level,
+            }
+
+            if delta >= self.min_improvement or new_sim >= self.similarity_threshold:
+                current_similarity = new_sim
+                added_pieces.append(piece_record)
+                consecutive_failures = 0
+                if new_metrics:
+                    similarity_results[func_id]["similarity_metrics"] = new_metrics
+                if new_regen:
+                    regen_code = new_regen
+                    last_good_regen = new_regen
+                    context.setdefault("regenerated_code", {})[func_id] = {
+                        "code": new_regen,
+                        "function_name": spec_data["function_name"],
+                    }
+                print(f"          -> {new_sim:.1%} (Δ{delta:+.1%})")
+                if new_sim >= self.similarity_threshold:
+                    break
+                continue
+
+            # Backtrack: snippet did not help enough (or regressed)
+            print(
+                f"          -> backtrack {new_sim:.1%} (Δ{delta:+.1%} < {self.min_improvement:.1%})"
+            )
+            HybridGapPlanner.remove_last_addition(spec, cand.code)
+            if already_added and already_added[-1] == cand.code:
+                already_added.pop()
+            rejected_ids.add(cand.candidate_id)
+            consecutive_failures += 1
+            if cand.stmt_key and cand.escalation_level == 0:
+                escalate_keys.add(cand.stmt_key)
+            regen_code = last_good_regen
+            if last_good_regen and func_id in context.get("regenerated_code", {}):
+                context["regenerated_code"][func_id]["code"] = last_good_regen
+
+        # Optional legacy full-code fallback (off by default)
+        if (
+            self.allow_full_fallback
+            and current_similarity < self.similarity_threshold
+            and regen_count < self.max_regens_per_func
+        ):
+            spec["hybrid_code_additions"] = [original_code]
+            spec["hybrid_use_exact_code"] = True
+            added_pieces.append(
+                {
+                    "code": original_code,
+                    "iteration": regen_count + 1,
+                    "method": "last_resort_full_code",
+                }
+            )
+            print("        Last resort: full original code in spec (fallback enabled)")
+            context, new_sim, new_regen, _ = self._hybrid_regen_and_score(
+                context, func_id, original_code, persist=True
+            )
+            regen_count += 1
+            current_similarity = new_sim
+            if new_regen:
+                regen_code = new_regen
+
+        similarity_results[func_id]["similarity_metrics"]["primary_similarity"] = current_similarity
+
+        entry = {
+            "function_name": spec_data["function_name"],
+            "initial_similarity": initial_similarity,
+            "final_similarity": current_similarity,
+            "iterations": len(added_pieces),
+            "regen_calls": regen_count,
+            "added_pieces": added_pieces,
+            "pieces_count": len(added_pieces),
+            "method": "diagnostic_incremental",
+            "rejected_candidates": len(rejected_ids),
+            "escalated_stmt_keys": sorted(escalate_keys),
+        }
+        print(
+            f"        Completed: {len(added_pieces)} kept piece(s), "
+            f"{regen_count} regen call(s), final {current_similarity:.1%}"
+        )
+        return context, entry
+
+    def _hybrid_regen_and_score(
+        self,
+        context: Dict[str, Any],
+        func_id: str,
+        original_code: str,
+        *,
+        persist: bool = True,
+    ) -> Tuple[Dict[str, Any], float, str, Dict[str, Any]]:
+        """Regenerate one function, re-run tests, return updated primary similarity."""
+        from agents.advanced_analyzer import SemanticSimilarityAnalyzer
+        from nodes import CodeRegenerationNode, TestExecutionNode, TestGenerationNode
+
+        regen_node = CodeRegenerationNode(self.config)
+        test_gen = TestGenerationNode(self.config)
+        test_exec = TestExecutionNode(self.config)
+        analyzer = SemanticSimilarityAnalyzer()
+
+        if func_id in context.get("regenerated_code", {}):
+            del context["regenerated_code"][func_id]
+
+        context = regen_node.execute(context)
+        new_regen = context.get("regenerated_code", {}).get(func_id, {}).get("code", "")
+        if not new_regen:
+            sim = float(
+                context.get("similarity_results", {})
+                .get(func_id, {})
+                .get("similarity_metrics", {})
+                .get("primary_similarity", 0.0)
+            )
+            return context, sim, "", {}
+
+        context = test_gen.execute(context)
+        context = test_exec.execute(context)
+
+        new_metrics = analyzer.calculate_semantic_similarity(original_code, new_regen)
+        test_data = context.get("test_results", {}).get(func_id, {})
+        behav_sim = self._hybrid_behavioral_test_sim(test_data) if test_data else 0.0
+        new_metrics["behavioral_test_similarity"] = behav_sim
+        struct = float(new_metrics.get("structural_similarity", 0.0))
+        tt = int(
+            test_data.get("total_tests", 0)
+            or (test_data.get("original_passed", 0) + test_data.get("original_failed", 0))
+        )
+        primary = compute_primary_similarity_metrics(
+            struct, behav_sim, tt, config=self.config
+        )
+        new_metrics["primary_similarity"] = primary
+
+        if persist:
+            if func_id not in context.get("similarity_results", {}):
+                context.setdefault("similarity_results", {})[func_id] = {}
+            context["similarity_results"][func_id]["similarity_metrics"] = new_metrics
+            context["similarity_results"][func_id]["regenerated_code"] = new_regen
+        return context, primary, new_regen, new_metrics
+
     def _hybrid_behavioral_test_sim(self, test_data: Dict[str, Any]) -> float:
-        total = test_data.get('total_tests', 0) or (
-            test_data.get('original_passed', 0) + test_data.get('original_failed', 0)
+        total = test_data.get("total_tests", 0) or (
+            test_data.get("original_passed", 0) + test_data.get("original_failed", 0)
         )
         if total <= 0:
             return 0.0
-        failures = test_data.get('failures', [])
+        failures = test_data.get("failures", [])
         if not isinstance(failures, list):
             return 0.0
         return (total - len(failures)) / total
 
 
 class FeedbackLoopNode(BaseNode):
-    """First feedback loop: Modifies prompt based on similarity gaps"""
+    """First feedback loop: Modifies prompt based on similarity gaps and natural language diff descriptions"""
     
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
         self.smart_prompt_engine = SmartPromptEngine()
+        from utils.code_diff_analyzer import CodeDiffAnalyzer
+        self.diff_analyzer = CodeDiffAnalyzer
     
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Process first feedback loop: modify prompts"""
+        """Process first feedback loop: modify prompts with metric gaps + natural language diff descriptions"""
         print("    Processing feedback loop (prompt modification)...")
         
         similarity_results = context.get('similarity_results', {})
         target_similarity = context['target_similarity']
+        original_code_dict = context.get('original_code', {})
+        regenerated_code = context.get('regenerated_code', {})
+        test_results = context.get('test_results', {})
         
         if 'feedback_data' not in context:
             context['feedback_data'] = {}
@@ -4514,14 +5057,37 @@ class FeedbackLoopNode(BaseNode):
                 try:
                     gaps = self._analyze_similarity_gaps(result)
                     
+                    # Add natural language diff descriptions for refinement loop
+                    original_code = original_code_dict.get(func_id, '')
+                    regen_code = regenerated_code.get(func_id, {}).get('code', '')
+                    diff_descriptions = []
+                    if original_code and regen_code:
+                        diff_descriptions = self.diff_analyzer.get_diff_natural_language_descriptions(
+                            original_code, regen_code, max_descriptions=12
+                        )
+                        if diff_descriptions:
+                            gaps.append("CODE DIFF (original vs regenerated - fix these in the spec):")
+                            gaps.extend(diff_descriptions)
+
+                    tr = test_results.get(func_id)
+                    if tr and not tr.get('behavioral_match', True):
+                        rf_node = RuntimeFeedbackLoopNode(self.config)
+                        test_detail = rf_node._summarize_test_failures(tr)
+                        if test_detail:
+                            gaps.append(
+                                "CONCRETE TEST OUTPUT MISMATCHES (align spec with original behavior): "
+                                + test_detail
+                            )
+                    
                     context['feedback_data'][func_id] = {
                         'gaps': gaps,
+                        'diff_descriptions': diff_descriptions,
                         'metrics': result['similarity_metrics'],
                         'iteration': context.get('current_iteration', 1)
                     }
                     
                     improved_count += 1
-                    print(f"        Feedback prepared")
+                    print(f"        Feedback prepared ({len(gaps)} gap items)")
                 
                 except Exception as e:
                     print(f"        ERROR: {e}")
@@ -4532,7 +5098,7 @@ class FeedbackLoopNode(BaseNode):
         return context
     
     def _analyze_similarity_gaps(self, result: Dict[str, Any]) -> List[str]:
-        """Analyze gaps in similarity"""
+        """Analyze gaps in similarity (metric-based)"""
         gaps = []
         metrics = result['similarity_metrics']
         
@@ -4549,6 +5115,14 @@ class FeedbackLoopNode(BaseNode):
             else:
                 branch_cov = _coerce_to_float(metrics.get('branch_coverage', 0))
                 gaps.append(f"Test-based validation: Low behavioral test similarity ({behavioral_test_sim:.1%}) with {branch_cov:.1%} branch coverage")
+
+        struct_sim = _coerce_to_float(metrics.get('structural_similarity', 0))
+        if behavioral_test_sim >= 0.99 and struct_sim < 0.92:
+            gaps.append(
+                "Structural parity lag while behavioral tests agree strongly: revise the specification so regenerated "
+                "code matches original identifiers, branch structure, literals, exception classes, and call sites "
+                "(AST-aligned with the reference), not merely pass the harness."
+            )
         
         if _coerce_to_float(metrics.get('branch_coverage', 0)) < 0.9999:
             missing_lines = metrics.get('missing_lines', [])

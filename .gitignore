@@ -1,17 +1,35 @@
 .env
+.env.local
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
 output*/
 *.egg-info/
-
-# Excluded from repo
-main.tex
-references.bib
-run_large_benchmark.py
-run_medium_benchmark.py
-run_small_benchmark.py
-run_new_benchmark.py
-create_benchmark_projects.py
-*_log.txt
 *.log
+*_log.txt
+
+# Vendored clones used only for one-off experiments (do not commit)
+yt-dlp-repo/
+
+# Local environments
+.venv/
+venv/
+.DS_Store
+
+# Keep the repo lean: only the core engine is tracked.
+# Personal testing helpers, sample projects, run outputs, and scratch dirs are local-only.
+scripts/
+tests/
+run_filelock_now.sh
+test_projects/
+manual_testing/
+docs/
+external/
+runs/
+smoke_onefunc/
+logs/
+configs/
+
+# Documentation: README.md is the only markdown tracked in the repo.
+*.md
+!README.md

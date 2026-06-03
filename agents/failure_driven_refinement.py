@@ -39,7 +39,15 @@ class FailureDrivenRefinementEngine:
         missing_lines = diff_result.get('missing_lines', [])
         diff_blocks = diff_result.get('diff_blocks', [])
 
-        if not missing_lines and not diff_blocks:
+        # Natural language diff descriptions for richer refinement
+        diff_descriptions = self.diff_analyzer.get_diff_natural_language_descriptions(
+            original_code, regenerated_code, max_descriptions=15
+        )
+        diff_nl_section = ""
+        if diff_descriptions:
+            diff_nl_section = "\n\nNATURAL LANGUAGE DIFF (what differs - address these in spec updates):\n" + "\n".join(f"- {d}" for d in diff_descriptions)
+
+        if not missing_lines and not diff_blocks and not diff_descriptions:
             return {'abstract_updates': [], 'success': True}
 
         # Build context for LLM
@@ -60,6 +68,7 @@ ORIGINAL CODE (excerpt - lines present in original but missing in regenerated):
 ```
 {missing_context}
 ```
+{diff_nl_section}
 
 CURRENT SPECIFICATION (excerpt):
 - Description: {str(current_spec.get('description', ''))[:300]}
@@ -71,13 +80,15 @@ SIMILARITY GAPS:
 - Textual: {similarity_metrics.get('textual_similarity', 0):.1%}
 
 TASK: Infer what ABSTRACT specification content is missing. Provide natural language additions only - NO code snippets.
+Prioritize gaps that would change observable behavior (exceptions, branches, ordering) so the next regeneration matches tests and structure.
 Output a JSON object with these optional keys:
 {{
   "postconditions_to_add": ["list of postcondition strings to add"],
   "preconditions_to_add": ["list of precondition strings to add"],
   "description_additions": "paragraph to append to description",
   "edge_cases_to_document": ["edge case descriptions"],
-  "variable_constraints": ["constraints on variables that may be missing"]
+  "variable_constraints": ["constraints on variables that may be missing"],
+  "implementation_gaps": ["each bullet: one concrete requirement the regenerated code must satisfy to match original structure/behavior (e.g. exact exception type when X, branch when Y, call pattern for Z). Aim for minimal bullets that close the largest AST gaps."]
 }}
 
 Only include keys for which you have concrete suggestions. Be specific and actionable.
@@ -112,6 +123,7 @@ Output valid JSON only, no markdown."""
             'description_additions': parsed.get('description_additions', ''),
             'edge_cases_to_document': parsed.get('edge_cases_to_document', []),
             'variable_constraints': parsed.get('variable_constraints', []),
+            'implementation_gaps': parsed.get('implementation_gaps', []),
             'success': True
         }
         return result
@@ -163,5 +175,13 @@ Output valid JSON only, no markdown."""
         if 'failure_driven_updates' not in spec:
             spec['failure_driven_updates'] = []
         spec['failure_driven_updates'].append(updates)
+
+        gaps = updates.get('implementation_gaps') or []
+        if gaps:
+            if 'structural_implementation_gaps' not in spec:
+                spec['structural_implementation_gaps'] = []
+            for g in gaps:
+                if g and isinstance(g, str) and g not in spec['structural_implementation_gaps']:
+                    spec['structural_implementation_gaps'].append(g)
 
         return spec

@@ -32,6 +32,66 @@ class SpecificationOrchestrator:
         self.workflow_graph = nx.DiGraph()
         self.results = {}
         self._setup_workflow()
+
+    def _build_run_config(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Snapshot of hyperparameters for reproducibility (paper alignment, ablations)."""
+        c = self.config
+        return {
+            'target_similarity': context.get('target_similarity', c.get('target_similarity', 0.99)),
+            'max_iterations': context.get('max_iterations', c.get('max_iterations', 10)),
+            'enable_program_slicing': c.get('enable_program_slicing', True),
+            'enable_failure_driven_refinement': c.get('enable_failure_driven_refinement', True),
+            'enable_hybrid_specs': c.get('enable_hybrid_specs', True),
+            'hybrid_similarity_threshold': c.get('hybrid_similarity_threshold', 0.99),
+            'hybrid_min_improvement_per_step': c.get('hybrid_min_improvement_per_step', 0.015),
+            'hybrid_max_regens_per_func': c.get('hybrid_max_regens_per_func', 5),
+            'hybrid_allow_full_code_fallback': c.get('hybrid_allow_full_code_fallback', False),
+            'failure_driven_max_attempts': c.get('failure_driven_max_attempts', 3),
+            'hybrid_max_iterations': c.get('hybrid_max_iterations', 12),
+            'min_improvement_for_early_exit': c.get('min_improvement_for_early_exit', 0.02),
+            'model': c.get('model', ''),
+            'only_qualified_names': c.get('only_qualified_names'),
+            'ablation_profile': self._infer_ablation_profile(c),
+            'enable_context_bundle': c.get('enable_context_bundle', True),
+            'context_budget_chars': c.get('context_budget_chars'),
+            'context_k_hop': c.get('context_k_hop'),
+            'context_scope_parent_levels': c.get('context_scope_parent_levels'),
+            'context_enable_rag': c.get('context_enable_rag', False),
+            'context_spec_prompt_inject_chars': c.get('context_spec_prompt_inject_chars'),
+            'context_regen_bundle_chars': c.get('context_regen_bundle_chars'),
+            'enable_llm_generated_tests': c.get('enable_llm_generated_tests', True),
+            'min_behavioral_cases': c.get('min_behavioral_cases'),
+            'max_llm_test_generation_rounds_per_func': c.get(
+                'max_llm_test_generation_rounds_per_func'
+            ),
+            'harness_mode': c.get('harness_mode', 'auto'),
+            'pytest_harness_timeout_sec': c.get('pytest_harness_timeout_sec', 300),
+            'context_test_prompt_bundle_bytes': c.get('context_test_prompt_bundle_bytes'),
+            'regeneration_spec_json_char_budget': c.get('regeneration_spec_json_char_budget'),
+            'trusted_behavioral_oracle_blend': c.get('trusted_behavioral_oracle_blend', True),
+            'trusted_behavioral_agreement_floor': c.get('trusted_behavioral_agreement_floor'),
+            'behavioral_oracle_blend_weight': c.get('behavioral_oracle_blend_weight'),
+        }
+
+    @staticmethod
+    def _infer_ablation_profile(config: Dict[str, Any]) -> str:
+        """Human-readable label for the active configuration."""
+        s = config.get('enable_program_slicing', True)
+        fd = config.get('enable_failure_driven_refinement', True)
+        h = config.get('enable_hybrid_specs', True)
+        if s and fd and h:
+            return 'full_pipeline'
+        if not s and not fd and not h:
+            return 'minimal_stages'
+        if not s and fd and h:
+            return 'baseline_monolithic_no_slicing'
+        if s and not fd and not h:
+            return 'baseline_no_stage2_no_stage3'
+        if s and fd and not h:
+            return 'no_hybrid_stage3'
+        if s and not fd and h:
+            return 'no_failure_driven_stage2'
+        return 'custom'
     
     def _setup_workflow(self):
         """Setup the workflow graph"""
@@ -191,7 +251,7 @@ class SpecificationOrchestrator:
             fid for fid, res in context.get('similarity_results', {}).items()
             if res.get('similarity_metrics', {}).get('primary_similarity', 0.0) < target
         ]
-        if below_threshold and self.config.get('enable_hybrid_specs', True):
+        if below_threshold and self.config.get('enable_failure_driven_refinement', True):
             print(f"\nStage 2: Failure-driven refinement ({len(below_threshold)} functions below threshold)")
             print("=" * 70)
             context['target_similarity'] = target
@@ -293,19 +353,21 @@ class SpecificationOrchestrator:
         else:
             behavioral_test_avg = _average(behavioral_test_values)
         
-        # Primary = (AST + behavioral_test) / 2 (textual ignored for threshold)
+        # ``primary_similarity`` is defined per-function in ``SimilarityAnalyzerNode`` /
+        # hybrid updates (often structural-only until enough harness tests exist).
         textual_avg = _average(textual_values)
         ast_avg = _average(structural_values)
         behavioral_avg = _average(behavioral_values)
-        primary_avg = (ast_avg + behavioral_test_avg) / 2.0 if behavioral_test_avg > 0 else ast_avg
-        
+        # Per-function ``primary_similarity`` already applies min-test-case blending rules in
+        # ``SimilarityAnalyzerNode`` — keep the headline metric consistent with that.
+        primary_avg = _average(primary_values)
         phase_tracking = self._compile_phase_tracking(context)
         paper_data = self._compile_paper_data(context)
         context['paper_data'] = paper_data  # Needed for _compile_loop_stats
         loop_stats = self._compile_loop_stats(context)
         context['phase_tracking'] = phase_tracking
-        context['paper_data'] = paper_data
         context['loop_stats'] = loop_stats
+        run_config = self._build_run_config(context)
         analysis = {
             'total_functions': total_functions,
             'successful_functions': len([s for s in context['specifications'].values() if s.get('success', False)]),
@@ -315,7 +377,7 @@ class SpecificationOrchestrator:
             'average_primary_similarity': primary_avg,  # Calculated from overall averages for consistency
             'average_textual_similarity': textual_avg,
             'average_structural_similarity': ast_avg,
-            'average_behavioral_similarity': _average(behavioral_values),
+            'average_behavioral_similarity': behavioral_avg,
             'average_behavioral_test_similarity': behavioral_test_avg,
             'average_branch_coverage': _average(branch_coverage_values),
             'success_rate': success_rate,
@@ -325,12 +387,14 @@ class SpecificationOrchestrator:
             'similarity_distribution': self._analyze_similarity_distribution(similarities),
             'test_statistics': test_stats,
             'paper_data': paper_data,
-            'function_results': self._compile_function_results(context, phase_tracking)
+            'function_results': self._compile_function_results(context, phase_tracking),
+            'run_config': run_config,
         }
         
         return {
             'success': True,
             'analysis': analysis,
+            'run_config': run_config,
             'context': context,
             'timestamp': time.time()
         }
@@ -343,11 +407,20 @@ class SpecificationOrchestrator:
             return {
                 'tests_generated': 0,
                 'tests_executed': 0,
+                'total_test_cases': 0,
+                'test_cases_matching': 0,
+                'test_case_agreement_rate': 0.0,
                 'behavioral_matches': 0,
-                'behavioral_mismatches': 0
+                'behavioral_mismatches': 0,
+                'behavioral_match_rate': 0.0,
+                'full_branch_coverage': 0,
             }
         
         total_tests = sum(r['total_tests'] for r in test_results.values())
+        matching_cases = sum(
+            r.get('total_tests', 0) - len(r.get('failures') or [])
+            for r in test_results.values()
+        )
         behavioral_matches = sum(1 for r in test_results.values() if r.get('behavioral_match', False))
         full_branch_coverage = sum(1 for r in test_results.values() if r.get('coverage_complete', False))
         
@@ -355,6 +428,8 @@ class SpecificationOrchestrator:
             'tests_generated': len(context.get('generated_tests', {})),
             'tests_executed': len(test_results),
             'total_test_cases': total_tests,
+            'test_cases_matching': matching_cases,
+            'test_case_agreement_rate': matching_cases / total_tests if total_tests > 0 else 0.0,
             'behavioral_matches': behavioral_matches,
             'behavioral_mismatches': len(test_results) - behavioral_matches,
             'behavioral_match_rate': behavioral_matches / len(test_results) if test_results else 0.0,
@@ -499,11 +574,12 @@ class SpecificationOrchestrator:
                 additions = spec.get('hybrid_code_additions', [])
                 additions = [a for a in additions if str(a).strip()]
                 if additions:
-                    added_lines = sum(len(str(a).strip().split('\n')) for a in additions)
-                    orig_lines = len(orig_code.strip().split('\n'))
-                    hybrid_code_percent = (added_lines / orig_lines * 100) if orig_lines > 0 else 0
+                    # Volume of grafted material vs full original (repeat iterations count toward total).
+                    added_chars = sum(len(str(a).strip()) for a in additions)
+                    orig_chars = len(orig_code.strip())
+                    hybrid_code_percent = (added_chars / orig_chars * 100) if orig_chars > 0 else 0.0
                     if hybrid_code_percent == 0 and hybrid_res.get('iterations', 0) > 0:
-                        hybrid_code_percent = 1.0  # Minimum: hybrid was used, so some code was added
+                        hybrid_code_percent = 1.0  # Minimum: hybrid ran with non-empty bookkeeping
 
             first_run = context.get('similarity_after_first_run', {}).get(func_id, {})
             after_feedback = context.get('similarity_after_feedback', {}).get(func_id, {})
@@ -597,6 +673,9 @@ class SpecificationOrchestrator:
         """Save enhanced results to files"""
         os.makedirs(output_dir, exist_ok=True)
         
+        # Top-level run_config aids reproducibility without digging into analysis
+        if 'run_config' not in results and results.get('analysis', {}).get('run_config'):
+            results = {**results, 'run_config': results['analysis']['run_config']}
         with open(os.path.join(output_dir, "spec_results.json"), 'w') as f:
             json.dump(results, f, indent=2, default=str)
         

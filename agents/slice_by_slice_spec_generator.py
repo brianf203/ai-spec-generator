@@ -18,7 +18,7 @@ class SliceBySliceSpecGenerator:
     Generates specifications slice-by-slice, then merges them.
     """
     
-    def __init__(self, call_llm: Callable[[str], str]):
+    def __init__(self, call_llm: Callable[..., str]):
         self.call_llm = call_llm
     
     def generate_spec_from_slices(
@@ -27,7 +27,8 @@ class SliceBySliceSpecGenerator:
         slicing_analysis: Dict[str, Any],
         function_name: str,
         func_info: Dict[str, Any],
-        causal_minimal_elements: Optional[List[str]] = None
+        causal_minimal_elements: Optional[List[str]] = None,
+        refinement_notes: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Generate specification using slice-by-slice approach.
@@ -116,7 +117,8 @@ class SliceBySliceSpecGenerator:
             function_name,
             func_info,
             source_code,
-            causal_minimal_elements
+            causal_minimal_elements,
+            refinement_notes=refinement_notes,
         )
         
         return {
@@ -289,7 +291,18 @@ class SliceBySliceSpecGenerator:
         # Calculate nesting depth for this slice
         nesting_depth = self._calculate_slice_nesting_depth(slice_code, original_source)
         nesting_info = f"- Maximum nesting depth: {nesting_depth} levels (CRITICAL: preserve exact indentation levels)"
-        
+
+        bounded_ctx_section = ""
+        ctx_bundle = (func_info.get("context_bundle_text") or "").strip()
+        if ctx_bundle:
+            bounded_ctx_section = (
+                "### READ-ONLY BOUNDED DEPENDENCY CONTEXT "
+                "(same-module / class / scoped excerpts; summarize, do not paste verbatim)\n"
+                "```text\n"
+                + ctx_bundle
+                + "\n```\n\n"
+            )
+
         prompt = f"""Generate a JSON specification for ONLY this code slice (slice {slice_index} of {total_slices}).
 
 SLICE CONTEXT:
@@ -309,6 +322,7 @@ FUNCTION CONTEXT:
 - Function name: {function_name}
 - This is part of a larger function that has been decomposed into {total_slices} slices.
 
+{bounded_ctx_section}
 INSTRUCTIONS:
 Generate a JSON specification that describes ONLY what this slice does. Focus on:
 1. What output/effect this slice produces
@@ -556,7 +570,8 @@ Generate the JSON specification now:"""
         function_name: str,
         func_info: Dict[str, Any],
         source_code: str,
-        causal_minimal_elements: Optional[List[str]] = None
+        causal_minimal_elements: Optional[List[str]] = None,
+        refinement_notes: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Merge multiple slice specs into one complete specification.
@@ -727,6 +742,12 @@ Generate the JSON specification now:"""
         merged['specification_method'] = 'slice_by_slice'
         merged['num_slices'] = len(slice_specs)
         merged['max_nesting_depth'] = max_nesting_depth  # Include nesting depth in merged spec
+
+        # Carry feedback-loop / test-failure context into the spec dict (regeneration dumps full JSON).
+        if refinement_notes:
+            merged['refinement_feedback_items'] = [
+                str(x).strip() for x in refinement_notes if str(x).strip()
+            ][:30]
         
         return merged
 

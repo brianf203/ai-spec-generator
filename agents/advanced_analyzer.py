@@ -5,6 +5,7 @@ Specialized agents for different types of code analysis
 
 import ast
 import json
+import os
 import re
 from typing import Dict, List, Any, Optional, Set, Tuple
 from collections import defaultdict, Counter
@@ -425,6 +426,37 @@ class SemanticSimilarityAnalyzer:
     
     def __init__(self):
         self.analyzer = AdvancedCodeAnalyzer()
+
+    @staticmethod
+    def coerce_python_source_for_ast(raw: Optional[str]) -> str:
+        """
+        Strip LLM packaging (markdown fences, leading prose) before ``ast.parse``.
+        Regenerated snippets often arrive wrapped in ``` fences; without this, structural similarity
+        falsely collapses to zero on SyntaxError.
+        """
+        from textwrap import dedent
+
+        if not raw:
+            return ''
+        text = raw.strip()
+        text = re.sub(
+            r"(?m)^\s*```(?:python|py)?\s*\r?\n?",
+            "",
+            text,
+            flags=re.IGNORECASE,
+        )
+        text = re.sub(r"(?m)\r?\n?\s*```\s*$", "", text.strip())
+        text = dedent(text).strip()
+
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            s = line.lstrip()
+            if s.startswith(("def ", "async def ", "class ")):
+                j = i
+                while j > 0 and lines[j - 1].lstrip().startswith("@"):
+                    j -= 1
+                return "\n".join(lines[j:]).strip()
+        return text or ""
     
     def calculate_semantic_similarity(self, code1: str, code2: str) -> Dict[str, float]:
         """
@@ -464,21 +496,15 @@ class SemanticSimilarityAnalyzer:
     def _structural_similarity(self, code1: str, code2: str) -> float:
         """Calculate structural similarity using enhanced AST comparison"""
         try:
-            # Handle empty code
-            if not code1 or not code2 or len(code1.strip()) < 5 or len(code2.strip()) < 5:
+            # Empty only — never hard-fail valid short stubs (e.g. `pass` is 4 chars but parseable).
+            if not code1 or not code2 or not code1.strip() or not code2.strip():
                 return 0.0
-            
-            # Dedent code to handle indented code from class methods
-            from textwrap import dedent
-            code1_dedented = dedent(code1).strip()
-            code2_dedented = dedent(code2).strip()
-            
-            # If dedenting results in empty code, use original
-            if not code1_dedented:
-                code1_dedented = code1.strip()
-            if not code2_dedented:
-                code2_dedented = code2.strip()
-            
+
+            code1_dedented = self.coerce_python_source_for_ast(code1)
+            code2_dedented = self.coerce_python_source_for_ast(code2)
+            if not code1_dedented or not code2_dedented:
+                return 0.0
+
             tree1 = ast.parse(code1_dedented)
             tree2 = ast.parse(code2_dedented)
             
@@ -530,12 +556,13 @@ class SemanticSimilarityAnalyzer:
             
             # Return actual calculated similarity (no artificial boost)
             return base_similarity
-        except SyntaxError as e:
-            # If parsing fails, cannot calculate structural similarity - return 0.0
-            # No fallback to string similarity (would inflate scores)
+        except SyntaxError:
+            # If parsing fails (markdown fences, truncated output), similarity is undefined.
             return 0.0
         except Exception as e:
-            # Any other error - return 0.0 (no fallback inflation)
+            # Previously swallowed all errors → scores looked like LLM failures when the metric crashed.
+            if os.environ.get("VERBOSE_SIMILARITY"):
+                print(f"[SemanticSimilarityAnalyzer] structural error: {e}", flush=True)
             return 0.0
     
     def _check_semantic_equivalence_boost(
@@ -735,10 +762,8 @@ class SemanticSimilarityAnalyzer:
     def _behavioral_similarity(self, code1: str, code2: str) -> float:
         """Calculate behavioral similarity"""
         try:
-            # Dedent code to handle indented code from class methods
-            from textwrap import dedent
-            code1_dedented = dedent(code1).strip() or code1.strip()
-            code2_dedented = dedent(code2).strip() or code2.strip()
+            code1_dedented = self.coerce_python_source_for_ast(code1)
+            code2_dedented = self.coerce_python_source_for_ast(code2)
             
             # Extract function signatures and behavior patterns
             behavior1 = self._extract_behavior_patterns(code1_dedented)
