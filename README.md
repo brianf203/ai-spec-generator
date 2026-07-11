@@ -1,6 +1,6 @@
 # AI Spec Generator
 
-A specification → regeneration → similarity pipeline for Python. Given real source code, it
+A specification → regeneration → similarity pipeline for Python. Given source code, it
 generates a natural-language + structured **specification**, regenerates code from that spec with
 **Anthropic Claude** (default `claude-sonnet-4-6`), and measures how close the regenerated code is
 to the original along **structural** and **behavioral** axes.
